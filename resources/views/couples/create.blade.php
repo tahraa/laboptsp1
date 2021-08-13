@@ -91,5 +91,4 @@
             @endphp
         @endif
     </div>
-</div>
 @endsection
