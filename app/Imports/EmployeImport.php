@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Affaire;
 use App\Employe;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -17,27 +18,17 @@ class EmployeImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-      
-        $sexe = '';
-        if($row['sexe'] == 'Masculin'){
-            $sexe = 'masculin';
-        }else{
-            $sexe = 'feminin';
-        }
 
-        return new Employe([
 
-            'nni'=> $row['nni'],
-            'nom' => $row['nom'],
-            'prenom' => $row['prenom'],
-            'matricule' => $row['matricule'],
-            'num_cnam' => $row['num_cnam'],
-            'statut' => 1,
-            'sexe' => $sexe,
-            'date_naissance' => Carbon::parse($row['date_naissance']),
-            'service' => $row['service'],
-            'situation_civile' => $row['situation_civile'],
-            'type' => 'Agent SNIM'
+        return new Affaire([
+            'num_affaire' => $row['num_affaire'],
+            'type'=> $row['type'],
+            'partie_declarent' => $row['partie_declarent'],
+            'num_affaire_c' => $row['num_affaire_c'],
+            'date' => Carbon::parse($row['date']),
+            'lieu_crime' => $row['lieu_crime'],
+            'num_soit' => $row['num_soit'],
+
 
 
         ]);

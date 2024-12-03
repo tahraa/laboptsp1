@@ -4,10 +4,12 @@
     $user_id = auth()->user()->id;
     $user_logged_in = \App\User::where(['id' => $user_id])->first();
 @endphp
-@if ($user_logged_in->profile == 'profil3')
+@if ($user_logged_in->profile == 'profil2' || $user_logged_in->profile == 'profil3'|| $user_logged_in->profile == 'profil1')
 <form role="form" action="/handle-import" method="post" enctype="multipart/form-data">
     @csrf
-
+    <div class="card-header text-primary"><h4>Import & Export/Utilisateurs</h4>
+        </div>
+        <div class="card-body">
     <div class="form-group">
     <label for="my-input">Ficher Excel</label>
     <input required="required" id="my-input" class="form-control-file" type="file" name="file">
@@ -18,17 +20,18 @@
 </form>
 
 
-
+</div>
+        <div class="card-body">
 
 <div class="row justify-content">
     <div class="card">
     <div class="card-header"> Exporter le liste des utilisateurs</div>
-   
+
 <form role="form" action="{{ route('users-export') }}" method="post" enctype="multipart/form-data">
     @csrf
     <button type="submit" class="btn btn-primary">
     Download
-    </button></form></div> </div>
+    </button></form></div> </div></div>
 
 
 

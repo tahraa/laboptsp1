@@ -56,6 +56,11 @@
                           <label for="st">statut</label>
                           <select id="st"  required="required" name="statut" id="" class="form-control"><option {{ $beneficier->statut ? 'selected' : '' }} value="1"  >assuré</option><option value="0" {{ !$beneficier->statut ? 'selected' : '' }} >non assuré</option></select>
                         </div>
+                  
+            <div class="form-group">
+                <label for="dl">delai</label>
+                <input id="dl" maxlength="2" required="required" type="number" name="delai"  class="form-control"  value="{{ old('delai', $beneficier->delai ?? null) }}"/>
+              </div>
                         <div class="form-group">
                           <label for="st">sexe</label>
                           <select id="st" required="required" name="sexe" id="" class="form-control"><option {{ $beneficier->sexe == 'masculin' ? 'selected' : '' }}  value="masculin">masculin</option><option {{ $beneficier->sexe == 'feminin'  ? 'selected' : '' }} value="feminin">féminin</option></select>

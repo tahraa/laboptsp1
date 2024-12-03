@@ -3,73 +3,49 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Employe;
-use App\Couple;
-use App\Enfant;
+use App\Commiseriat;
+use App\Affaire;
 use App\Logs;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 
 
 class EmpOneController extends Controller
 {
 
-    public function index()
-    {
 
-    }
 
 
     public function create()
-    {
-        return view('empone.create');
+    {    $c = Commiseriat::all();
+        return view('empone.create'     , ['c' =>  $c,]);
+
     }
 
 
     public function store(Request $request)
     {
         $validation = [
-            'nni' => 'required|digits:10|unique:employes|numeric' ,
-            'num_cnam' => 'required|digits:8|unique:employes|numeric',
-            'nom' => 'required',
-            'prenom' => 'required',
-            'sexe' => 'required',
-            'matricule' => 'required|digits:5|unique:employes|numeric',
-            'statut' => 'required',
-            'emp_image' => 'required',
-            'situation_civile' => 'required',
-            'etablissement' => 'required',
-            'service' => 'required|digits:6|numeric',
+            'num_affaire' => 'required|unique:affaires',
+            'type' => 'required',
+            'date' => 'required',
+            'num_soit => numeric',
         ];
         $request->validate($validation);
-        $image='';
-        if ($request->hasFile('emp_image')) {
-            $request->file('emp_image')->storePubliclyAs(
-                'avatars',
-                $request->input('matricule').'.jpg'
-            );
-            $image = $request->input('matricule');
-        }
+        $affaire = new Affaire();
+        $emp = Commiseriat::withCount(['affaires'])->findOrFail($request->input('employe'));
+        $affaire->num_affaire=$request->input('num_affaire');
+        $affaire->type=$request->input('type');
+        $affaire->commiseriat_id = $request->input('employe');
+        $affaire->num_affaire_c=$request->input('num_affaire_c');
+        $affaire->lieu_crime=$request->input('lieu_crime');
+		    $affaire->lieu_prelevement=$request->input('lieu_prelevement');
+				        $affaire->date_prelevement=$request->input('date_prelevement');
+        $affaire->reference=$request->input('reference');
+        $affaire->num_soit=$request->input('num_soit');
+        $affaire->partie_declarent = $emp->nom." DRS ".$emp->region;
+        $affaire->date=$request->input('date');
+        $affaire->save();
 
-
-        $emp = Employe::create([
-            'nni' => $request->input('nni'),
-            'nom' => $request->input('nom'),
-            'prenom' => $request->input('prenom'),
-            'sexe' => $request->input('sexe'),
-            'matricule' => $request->input('matricule'),
-            'statut' => $request->input('statut'),
-            'num_cnam' => $request->input('num_cnam'),
-            'situation_civile' => $request->input('situation_civile'),
-            'service' => $request->input('service'),
-            'etablissement' => $request->input('etablissement'),
-            'date_naissance' => $request->input('date_naissance'),
-            'image' => $image,
-
-        ]);
-/*
-        $emp->type = 'emp'; */
-        $action = 'Création : Agent(mat:'.$request->input('matricule').' nom:'.$request->input('nom').')' ;
+        $action = 'Création : Affaire(N°affaire:'.$request->input('num_affaire').' ,'.'type: '.$request->input('type').')';
         $user_id = auth()->user()->id;
         $user_logged_in = \App\User::where(['id' => $user_id])->first();
         if (!($user_logged_in->name == 'dev')) {
@@ -79,62 +55,12 @@ class EmpOneController extends Controller
                 'user' => $user_logged_in->name,
                 'email' => $user_logged_in->email,
                 'action' => $action,
-                'entite' => $emp->matricule,
+                'entite' => $affaire->num_affaire,
             ]);
         }
-
-        return back()->with('success', 'le livret a été créé avec succès :).');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-
-
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Request $request, $id)
-    {
-
+        return back()->with('success', 'Affaire a été ajouter avec succès :).');
     }
 
 
-    public function search($id)
-    {
 
-    }
 }

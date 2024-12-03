@@ -64,10 +64,10 @@ class CouplebController extends Controller
             'date_naissance' => 'required',
         ];
         $request->validate($validation);
-         // $beneficier = Beneficier::find($request->input('Beneficier'));
+
          $beneficier = Beneficier::withCount(['couples', 'enfants'])->findOrFail($request->input('beneficier'));
          $sexe = ($beneficier->sexe == 'masculin') ? 'feminin' : 'masculin';
-         //$beneficier->couples_count;
+
          if( ($beneficier->couples_count >= 2 && $beneficier->sexe == 'masculin') || ($beneficier->couples_count >= 1 && $beneficier->sexe == 'feminin') ){
              return back()->with('denied', 'bénéficier possède déja la limite');
          }else{

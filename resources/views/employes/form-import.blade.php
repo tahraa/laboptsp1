@@ -6,9 +6,12 @@
     $user_logged_in = \App\User::where(['id' => $user_id])->first();
 @endphp
 
-@if ($user_logged_in->profile == 'profil3')
-    <form action="{{ route('employes-import') }}" enctype="multipart/form-data" method="POST">
+@if ($user_logged_in->profile == 'profil2' || $user_logged_in->profile == 'profil3'|| $user_logged_in->profile == 'profil1')
+<form action="{{ route('employes-import') }}" enctype="multipart/form-data" method="POST">
         @csrf
+        <div class="card-header text-primary"><h4>Import & Export/Affaires</h4>
+        </div>
+        <div class="card-body">
         <div class="form-group">
         <label for="my-input">Ficher Excel</label>
         <input id="my-input" class="form-control-file" type="file" name="file">
@@ -17,17 +20,18 @@
             Importer
         </button>
     </form>
-
+    </div>
+        <div class="card-body">
 <div class="row justify-content">
     <div class="card">
-    <div class="card-header"> Exporter le liste des Employes</div>
-   
+    <div class="card-header"> Exporter le liste des Affaires</div>
+
 <form role="form" action="{{ route('employes-export') }}" method="post" enctype="multipart/form-data">
     @csrf
-   
+
     <button type="submit" class="btn btn-primary">
     Download
-    </button></form></div> </div> 
+    </button></form></div> </div> </div>
   @else
     @php
         header("Location: " . URL::to('/'), true, 302);

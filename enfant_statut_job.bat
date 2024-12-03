@@ -1,1 +1,1 @@
-cd C:\xampp\htdocs\livret05 && php artisan command:enf_rule
+cd C:\xampp\htdocs\LivretFamilial && php artisan command:enf_rule

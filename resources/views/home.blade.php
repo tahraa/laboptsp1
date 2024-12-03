@@ -1,4 +1,4 @@
-@extends('layouts.menu')
+@extends('layout')
 
 @section('content')
 <div class="container">
@@ -8,13 +8,13 @@
                 <div class="jumbotron text-center">
                     {{-- <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i>Accueil</a></li></ol>  --}}
-                    <img  src="{{ asset('images/livret.jpg') }}" alt="" width="500px" height="240px">
+                    <img  src="{{ asset('images/logo.jpeg') }}" alt="" width="390px" height="340px">
                     {{-- <img src="{{ asset('images/logo.png') }}" width="100px" height="100px" alt="" style="margin-top: -67px;
                     "> --}}
-                    <h4 class="text-primary font-weight-bold">Application de gestion de livrets familiaux</h4>
-                    <p class="text-primary">Société nationale industrielle et minière</p>
-                    <h4 class="text-primary font-weight-bold"><span  style="direction:rtl; margin-left:5px; font-family: 'Tajawal', sans-serif; font-size: 22px"> نظام ادارة دفتر القيد الأسري   </span></h4>
-                    <p class="text-primary" style="direction:rtl; margin-left:5px; font-family: 'Tajawal', sans-serif; font-size: 22px">الشركة الوطنية للصناعة و المناجم سنيم</p>
+                    <h4 class="text-primary font-weight-bold">Application de gestion des Registres</h4>
+                    <p class="text-primary">Laboratoire de Police Technique et Scientifique</p>
+                    <h4 class="text-primary font-weight-bold"><span  style="direction:rtl; margin-left:5px; font-family: 'Tajawal', sans-serif; font-size: 22px"> نظام ادارة السجلات    </span></h4>
+                    <p class="text-primary" style="direction:rtl; margin-left:5px; font-family: 'Tajawal', sans-serif; font-size: 22px">مختبر الشرطة الفنية والعلمية</p>
                 </div>
                 <div class="card-body">
                     @if (session('status'))

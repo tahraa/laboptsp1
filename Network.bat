@@ -1,0 +1,1 @@
+cd C:\laragon\www\LivretFamilial && php artisan serve --host=192.168.88.72 --port=8000

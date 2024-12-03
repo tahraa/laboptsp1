@@ -4,6 +4,7 @@
     $user_id = auth()->user()->id;
     $user_logged_in = \App\User::where(['id' => $user_id])->first();
 @endphp
+
     <div class="container">
         <div class="card">
             <img class="card-img-top" src="holder.js/100x180/" alt="">

@@ -58,13 +58,12 @@ class UserController extends Controller
             'password'=> 'required|min:8',
             'password_confirmation'=> 'required|same:password',
             'profil'=> 'required',
-            'etablissement'=> 'required',
+
         ]);
         User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'profile' => $request->input('profil'),
-            'etablissement' => $request->input('etablissement'),
             'password' => Hash::make($request->input('password')),
         ]);
 
@@ -112,13 +111,8 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
+
     public function update(Request $request, $id)
     {
         $validation = [
@@ -141,12 +135,12 @@ class UserController extends Controller
 
         if (Hash::check($request->input('entred_password'), $user->password)) {
             $user->password = Hash::make($request->input('nv_password'));
-            
+
         }else{
                 return back()->with('denied', 'L\' ancien mot de passe est incorrect!)');
         }
            $changement .= 'password('.$user->password.'=>'.Hash::make($request->input('password')).')';
-    
+
 
         $user->save();
 
@@ -166,12 +160,9 @@ class UserController extends Controller
         return back()->with('success', 'L\' utilisateur a été modifier avec succès :)');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
+
+
     public function destroy(Request $request, $id)
     {
         $user = user::findOrFail($id);
@@ -188,7 +179,7 @@ class UserController extends Controller
                 'action' => $action
             ]);
         }
-        $request->session()->flash('success', 'L\'utilisateur est supprimés avec succès');
+        $request->session()->flash('success', 'L\'utilisateur est supprimé avec succès');
         return redirect()->route('users.index');
     }
 }

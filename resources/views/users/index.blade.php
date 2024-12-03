@@ -30,9 +30,12 @@
                 @endif
                 
                 <h4 class="card-title">Liste des utilisateurs</h4>
-            
+  
             <p class="card-text text-success font-weight-bold">Total : {{ $count_users }}</p>
-
+           <small class="text-center"><strong class="font-weight-bold text-primary">profile1:</strong> <strong class="text-info">Biologie</strong></small>
+     <small class="text-center"><strong class="font-weight-bold text-primary"> profile2: </strong> <strong class="text-info">chimie</strong></small>
+ <small class="text-center"><strong class="font-weight-bold text-primary"> profile3:</strong> <strong class="text-info">informatique</strong></small>
+  
                 <table
                     class="table"
                     data-toggle="table"
@@ -48,8 +51,9 @@
                             <th data-field="name">username</th>
                             <th data-field="email">email</th>
                             <th data-field="created_at">date_création</th>
-                            <th data-field="profile">profil</th>
-                            @if ($user_logged_in->profile == 'profil3' || $user_logged_in->profile == 'profil2')
+                            <th data-field="profile">profile</th>
+                            @if ($user_logged_in->profile == 'profil3'&& ($user_logged_in->name == 'dev'))
+								
                                 <th>action</th>
                             @endif
                         </tr>
@@ -64,20 +68,18 @@
                                         {{ $user->created_at }}
                                     </td>
                                     <td>{{ $user->profile }}</td>
-                                    <td>
-                                        @if ($user_logged_in->profile == 'profil2')
-                                            <a  class="btn btn-success btn-sm" type="button" href="{{ route('users.edit', ['user' => $user->id]) }}"><i class="fas fa-edit"></i></a>
-                                        @endif
-                                        @if ($user_logged_in->profile == 'profil3')
+                                        @if ($user_logged_in->profile == 'profil3'&& ($user_logged_in->name == 'dev'))
+                                   	 <td>
+                                     
                                         <a  class="btn btn-success btn-sm" type="button" href="{{ route('users.edit', ['user' => $user->id]) }}"><i class="fas fa-edit"></i></a>
                                         <form method="POST" action="{{ route('users.destroy', ['user' => $user->id]) }}">
                                             @csrf
                                             @method('DELETE')
                                             <button onclick="return confirm('Êtes-vous sûr de vouloir supprimer l\'utilisateur ??')" class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash-alt"></i></button>
-                                        </form>
+                                        </form>   </td>
                                         @endif
                                         
-                                    </td>
+                                 
                                 </tr>
                             @empty
                                 <tr>

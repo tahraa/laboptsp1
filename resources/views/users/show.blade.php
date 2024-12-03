@@ -17,21 +17,21 @@
                 <p>{{ Session::get('denied') }}</p>
             </div>
         @endif
+ <small class="text-center"><strong class="font-weight-bold text-primary">profile1:</strong> <strong class="text-info">Biologie</strong></small>
+     <small class="text-center"><strong class="font-weight-bold text-primary"> profile2: </strong> <strong class="text-info">chimie</strong></small>
+ <small class="text-center"><strong class="font-weight-bold text-primary"> profile3:</strong> <strong class="text-info">informatique</strong></small>
+  
+       
         <li>username : {{ $user->name }}</li>
         <li>email : {{ $user->email }}</li>
-        <li>etablissement : {{ $user->etablissement }}</li>
-        <li>{{ $user->profile}}</li>
+        <li>profile : {{ $user->profile}}</li>
         <li>date_création : {{ date('d-m-Y h:m:s', strtotime($user->created_at)) }}</li>
         <li>dernier_modification : {{ date('d-m-Y h:m:s', strtotime($user->updated_at)) }}</li>
         <li>
-            @if ($user_logged_in->profile == 'profil1')
-                            
-            @endif
-            @if ($user_logged_in->profile == 'profil2')
-                <a  class="btn btn-success btn-sm" type="button" href="{{ route('users.edit', ['user' => $user->id]) }}"><i class="fas fa-edit"></i></a>
-            @endif
+            
+        
             @if ($user_logged_in->profile == 'profil3')
-            <a  class="btn btn-success btn-sm" type="button" href="{{ route('users.edit', ['user' => $user->id]) }}"><i class="fas fa-edit"></i></a>
+            <a  class="btn btn-success btn-sm" type="button" href="{{ route('users.editt', ['user' => $user->id]) }}"><i class="fas fa-edit"></i></a>
             <form method="POST" action="{{ route('users.destroy', ['user' => $user->id]) }}">
                 @csrf
                 @method('DELETE')

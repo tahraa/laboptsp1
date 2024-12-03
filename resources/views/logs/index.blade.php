@@ -44,11 +44,11 @@
                         >
                     <thead class="thead-inverse">
                         <tr>
-                            <th data-field="nni">user</th>
-                            <th data-field="nom">email</th>
-                            <th data-field="date_creation">date_création</th>
-                           <th data-field="entites">Matricule Concerné</th>
-                            <th data-field="description">description</th>
+                            <th data-field="nni">Utilisateur</th>
+                            <th data-field="nom">Email</th>
+                            <th data-field="date_creation">Date_création</th>
+                           <th data-field="entites">Affaire Concerné</th>
+                            <th data-field="description">Description</th>
                         </tr>
                         </thead>
                         <tbody>

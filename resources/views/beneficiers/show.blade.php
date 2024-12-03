@@ -42,6 +42,8 @@
                 </li>
                 <li>n°cnam: {{ $beneficier->num_cnam }}</li>
                 <li>date naissance : {{ $beneficier->date_naissance }}</li>
+                <li>date de recrutement : {{ $beneficier->date_recrutement }}</li>
+                <li>durée du contrat : {{ $beneficier->delai }} ans <li>
                 <li>age :
                     @php
                         $age = Carbon\Carbon::parse($beneficier->date_naissance)->age;

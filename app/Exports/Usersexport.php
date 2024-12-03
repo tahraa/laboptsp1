@@ -15,13 +15,13 @@ use Maatwebsite\Excel\Concerns\WithDrawings;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
-class UsersExport implements 
+class UsersExport implements
 FromQuery,
  WithHeadings,
   ShouldAutoSize,
    WithMapping, WithDrawings, WithCustomStartCell, WithEvents
-   
-{ 
+
+{
      use Exportable;
     /**
     * @return \Illuminate\Support\Collection
@@ -30,7 +30,7 @@ FromQuery,
     {
         return User::query();
     }
-    
+
     public function headings(): array
     {
         return [
@@ -38,7 +38,6 @@ FromQuery,
             'Nom',
             'Email',
             'Profile',
-            'Etablissement',
             'created_at',
         ];
     }
@@ -50,7 +49,6 @@ FromQuery,
             $user->name,
             $user->email,
             $user->profile,
-            $user->etablissement,
            Carbon::parse($user->created_at),
         ];
     }
@@ -62,7 +60,7 @@ FromQuery,
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $event->sheet->getStyle('A5:F5')->applyFromArray([
+                $event->sheet->getStyle('A3:F3')->applyFromArray([
                     'font' => [
                         'bold' => true
                     ],
@@ -81,16 +79,16 @@ FromQuery,
     {
         $drawing = new Drawing();
         $drawing->setName('logo');
-        $drawing->setDescription('snim logo');
+        $drawing->setDescription('labo logo');
         $drawing->setPath(public_path('/logo/logo.png'));
-        $drawing->setHeight(70);
+        $drawing->setHeight(40);
         $drawing->setCoordinates('A1');
         return $drawing;
     }
-    
+
     public function startCell(): string
     {
-        return 'A5';
+        return 'A3';
     }
 
 }

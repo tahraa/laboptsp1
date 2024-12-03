@@ -6,14 +6,13 @@
 @endphp
 <div class="container">
     <div class="card mt-3">
-        @if ($user_logged_in->profile == 'profil2' || $user_logged_in->profile == 'profil3')
+        @if ($user_logged_in->profile == 'profil1' ||$user_logged_in->profile == 'profil2' || $user_logged_in->profile == 'profil3')
 
-        <div class="card-header text-primary"><h2>Ajouter/Employé </h2>
-        </div>
 
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-8 offset-md-2">
+
+
+  <div class="card-header text-primary"><h2>Ajouter/Affaire</h2></div>
+  <div class="card-body">
             <form action="{{ route('empone.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @if ($errors->any())
@@ -33,64 +32,46 @@
                         <p>{{ Session::get('success') }}</p>
                     </div>
                 @endif
-                {{-- <div>
-                    <a type="button" href="{{ route('beneficier.create') }}"  class="btn btn-primary pull-right "><div class="glyphicon glyphicon-plus"></div> Ajouter/Béneficier hors de la SNIM</a>
-                </div> --}}
-                {{-- <p>Employé:  nombre couple : {{ $employe->couples_count }}   nombre enfants : {{ $employe->enfants_count }}</p> --}}
-             <div class="form-group">
-               <label for="m">matricule</label>
-               <input id="m" maxlength="5" required="required" type="text" name="matricule" placeholder="Enter matricule" class="form-control" value="{{ old('matricule') }}"/>
-             </div>
-             <div class="form-group">
-               <label for="nni">nni</label>
-               <input id="nni" maxlength="10" required="required" type="text" name="nni" placeholder="Enter nni" class="form-control" value="{{ old('nni') }}"/>
-             </div>
-             <div class="form-group">
-               <label for="nom">nom</label>
-               <input id="nom" required="required" type="text" name="nom" placeholder="Enter nom" class="form-control" value="{{ old('nom') }}"/>
-             </div>
-             <div class="form-group">
-               <label for="prenom">prénom</label>
-               <input id="prenom" required="required" type="text" name="prenom" placeholder="Enter prénom" class="form-control" value="{{ old('prenom') }}"/>
-             </div>
-             <div class="form-group">
-               <label for="st">statut</label>
-               <select id="st" required="required" name="statut" id="" class="form-control"><option {{ old('statut') == true ? 'selected' : '' }} value="1">assuré</option><option {{ old('statut') == false ? 'selected' : '' }}  value="0">non assuré</option></select>
-             </div>
-             <div class="form-group">
-               <label for="sexe">sexe</label>
-               <select id="sexe" required="required" name="sexe" id="" class="form-control"><option {{ old('sexe') == 'masculin' ? 'selected' : '' }} value="masculin">masculin</option><option {{ old('sexe') == 'feminin' ? 'selected' : '' }} value="feminin">féminin</option></select>
-             </div>
-             <div class="form-group">
-               <label for="service">service</label>
-               <input id="service" maxlength="6" required="required"  type="text" name="service" class="form-control" value="{{ old('service') }}" />
-             </div>
-             <div class="form-group">
-                <label for="nc">n°cnam</label>
-                <input id="nc" maxlength="8" required="required" type="text" name="num_cnam" placeholder="Enter num_cnam" class="form-control" value="{{ old('num_cnam') }}"/>
-            </div>
-            <div class="form-group">
-                <label for="dn">date naissance</label>
-                <input id="dn" required="required"  type="date" name="date_naissance" class="form-control" value="{{ old('date_naissance') }}"/>
-            </div>
-            <div class="form-group">
-              <label for="situation_civile">situation_civile</label>
-              <select id="situation_civile" required="required" name="situation_civile" id="" class="form-control"><option {{ old('situation_civile') == 'Célib.' ? 'selected' : '' }} value="Célib.">Célib</option><option {{ old('situation_civile') == 'Marié' ? 'selected' : '' }} value="Marié">Marié</option></select>
-            </div>
-            <div class="form-group">
-                <label for="ets">établissement</label>
-                <select name="etablissement" id="ets" class="form-control" required>
-                  <option value="NDB">NDB</option>
-                  <option value="ZTE">ZTE</option>
-                </select>
-            </div>
-             <div class="form-group">
-               <label for="photo">photo</label>
-               <input id="photo" required="required" type="file" name="emp_image" class="form-control" value="{{ old('emp_image') }}"/>
-             </div>
 
-                <button type="submit" class="btn btn-success">Enregistrer</button>
-            </form>
+                <div class="table-responsive">
+                <table class="table table-bordered table-responsive" id="" style="width: 100%">
+                  <tr>
+                    <th>N°affaire</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Partie declarent</th>
+                    <th>Référence</th>
+                    <th>N°affaire dans le commissariat</th>
+					    <th>Lieu de prélevement</th>
+		  <th>Date de prélevement</th>
+		      <th>N°Soit transmis</th>
+			   <th>N°Rapport</th>
+			   	   <th>Victime</th>
+                  </tr>
+                  <tr>
+                    <td><input style="width: 160px" maxlength="8" required="required" type="text" name="num_affaire" placeholder="Entrer num_affaire" class="form-control" value="{{ old('num_affaire') }}"/></td>
+                    <td><input style="width: 125px" required="required" type="text" name="type" placeholder="Entrer type d'affaire" class="form-control" value="{{ old('type') }}"/></td>
+                    <td><input style="width: 150px" required="required"  type="date" name="date" class="form-control" /></td>
+                    <td>
+                      <select id="emp"  required="required" style="width: 180px" name="employe" class="form-control selectemp" id="">
+                          @forelse ($c as $employe)
+                          <option {{ old('employe') == $employe->id ? 'selected' : '' }}  value="{{$employe->id}}">{{$employe->nom." DRS ".$employe->region}}</option>
+                          @empty
+                          @endforelse
+                      </select> </td>
+                      <td><input style="width: 150px" required="required"  type="txt" name="reference" placeholder="Entrer reference"class="form-control" value="{{ old('reference') }}"/></td>
+                    <td><input style="width: 150px"   type="txt" name="num_affaire_c" placeholder="Entrer num_affaire_commissariat" class="form-control" /></td>
+					 <td><input style="width: 150px"   type="txt" name="lieu_prelevement" placeholder="Entrer lieu prelevement"class="form-control" /></td>
+					<td><input style="width: 150px"  type="date" name="date_prelevement" placeholder="Entrer date de prelevement"class="form-control" /></td>
+	            <td><input style="width: 150px"   type="txt" name="num_soit" placeholder="Entrer num_soit" class="form-control" /></td>
+				 <td><input style="width: 125px"   type="txt" name="num_rapport" placeholder="Entrer num_rapport" class="form-control" /></td>
+				 	 <td><input style="width: 125px"   type="txt" name="victim" placeholder="Entrer Nom-Prénom" class="form-control" /></td>
+                </tr>
+            </table>
+            </div>
+
+            <button type="submit" class="btn btn-success">Enregistrer</button>
+        </form>
         </div>
         @else
         <div class="alert alert-warning" role="alert">

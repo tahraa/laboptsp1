@@ -1,164 +1,80 @@
 @extends('layout')
 @section('content')
 @php
-$user_id = auth()->user()->id;
-$user = \App\User::where(['id' => $user_id])->first();
+    $user_id = auth()->user()->id;
+    $user_logged_in = \App\User::where(['id' => $user_id])->first();
 @endphp
-<div class="container">
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-    @if (Session::has('success'))
-        <div class="alert alert-success text-center">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-            <p>{{ Session::get('success') }}</p>
-        </div>
-    @endif
-    @if (Session::has('denied'))
-        <div class="alert alert-danger text-center">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-            <p>{{ Session::get('denied') }}</p>
-        </div>
-    @endif
-    <div class="container mt-3">
-        <h2>Chercher</h2>
-        <br>
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#home">matricule</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#menu1">nni</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#menu2">prenom</a>
-          </li>
-        </ul>
+        <div class="card">
+            <img class="card-img-top" src="holder.js/100x180/" alt="">
+            <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                @if (Session::has('success'))
+                    <div class="alert alert-success text-center">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <p>{{ Session::get('success') }}</p>
+                    </div>
+                @endif
+                @if (Session::has('denied'))
+                    <div class="alert alert-danger text-center">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <p>{{ Session::get('denied') }}</p>
+                    </div>
+                @endif
+                <h5 class="card-title"><span class="font-weight-bold text-primary">Liste des affaires de résultat Positives</span> </h5>
 
-        <!-- Tab panes -->
-        <div class="tab-content">
-          <div id="home" class="container tab-pane active"><br>
-            <h3>matricule</h3>
-            <form action="{{ route('getSearch') }}" method="POST" class="form-inline">
-                @csrf
-               <div class="form-group mb-2">
-                    <input type="hidden" name="field" value="matricule">
-                    <label for="field" class="">Entité de selection</label>
-                    <select class="form-control-plaintext" name="entite" id="field">
-                        <option value="emp">Agent</option>
-                        <option value="ben">Bénéficier</option>
-                    </select>
-               </div>
-               <div class="form-group mx-sm-3 mb-2">
-                   <select name="q" style="width: 125px" required="required" id="q"  class="form-control selectemp_mat" data-select2-id="matricule">
-                       <option value="vide">-------</option>
-                       @forelse($employes as $employe)
-                       @if ($user->profile == 'profil2')
-                            @if($user->etablissement == $employe->etablissement)
-                                <option  value="{{$employe->matricule}}">
-                                        {{$employe->matricule}}
-                                </option>
-                            @endif
-                       @else
-                            <option  value="{{$employe->matricule}}">
-                                {{$employe->matricule}}
-                            </option>
-                       @endif
-                       @empty
-                       @endforelse
+            <p class="card-text text-success font-weight-bold">Total: {{ $count_emps +38 }}</p>
+            {{ $emps->links() }}
 
-                       @forelse ($beneficiers as $beneficier)
-                       @if ($user->profile == 'profil2')
-                           @if($user->etablissement == $beneficier->etablissement)
-                            <option  value="{{$beneficier->matricule}}">
-                                 {{$beneficier->matricule}}
-                            </option>
-                           @endif
-                       @else  
-                             <option  value="{{$beneficier->matricule}}">
-                                 {{$beneficier->matricule}}
-                             </option>
-                       @endif
-                       @empty
-                       @endforelse
-                   </select>
-               </div>
-               <button type="submit" class="btn btn-primary mb-2">Chercher</button>
-           </form>
-          </div>
-          <div id="menu1" class="container tab-pane fade"><br>
-            <h3>nni</h3>
-            <form action="{{ route('getSearch') }}" method="POST" class="form-inline">
-                @csrf
-               <div class="form-group mb-2">
-                   <input type="hidden" name="field" value="nni">
-                   <label for="field" class="">Entité de selection</label>
-                   <select class="form-control-plaintext" name="entite" id="field">
-                       <option value="emp">Agent</option>
-                       <option value="ben">Bénéficier</option>
-                   </select>
-               </div>
-               <div class="form-group mx-sm-3 mb-2">
-                   <select name="q" style="width: 125px" required="required" id="q"  class="form-control selectemp_nni" data-select2-id="nni">
-                       <option value="vide">-------</option>
-                       @forelse ($employes as $employe)
-                           <option  value="{{$employe->nni}}">
-                               {{$employe->nni}}
-                           </option>
-                       @empty
-                       @endforelse
-                       @forelse ($beneficiers as $beneficier)
-                           <option  value="{{$beneficier->matricule}}">
-                               {{$beneficier->matricule}}
-                           </option>
-                       @empty
-                       @endforelse
-                   </select>
-               </div>
-               <button type="submit" class="btn btn-primary mb-2">Chercher</button>
-           </form>
-          </div>
-          <div id="menu2" class="container tab-pane fade"><br>
-            <h3>prenom</h3>
-            <form action="{{ route('getSearch') }}" method="POST" class="form-inline">
-                @csrf
-               <div class="form-group mb-2">
-                    <input type="hidden" name="field" value="prenom">
-                   <label for="field" class="">Entité de selection</label>
-                    <select class="form-control-plaintext" name="entite" id="field">
-                        <option value="emp">Agent</option>
-                        <option value="ben">Bénéficier</option>
-                    </select>
-               </div>
-               <div class="form-group mx-sm-3 mb-2">
-                   <select name="q" style="width: 125px" required="required" id="q"  class="form-control selectemp_prenom" data-select2-id="prenom">
-                       <option value="vide">-------</option>
-                       @forelse ($employes as $employe)
-                           <option  value="{{$employe->prenom}}">
-                               {{$employe->prenom}}
-                           </option>
-                       @empty
-                       @endforelse
-                       @forelse ($beneficiers as $beneficier)
-                           <option  value="{{$beneficier->matricule}}">
-                               {{$beneficier->matricule}}
-                           </option>
-                       @empty
-                       @endforelse
-                   </select>
-               </div>
-               <button type="submit" class="btn btn-primary mb-2">Chercher</button>
-           </form>
-          </div>
+                <table
+
+                        class="table"
+                        data-toggle="table"
+                        data-pagination="false"
+                        data-search="true"
+                        data-locale='fr-FR'
+
+                        >
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th data-sortable="true">N°affaire</th>
+                            <th data-sortable="true">Type</th>
+                            <th data-sortable="true">Date</th>
+
+                            <th >Partie declarent</th>
+
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($emps as $employe)
+                                <tr>
+
+                                    <td><a href="{{ route('employes.show', ['employe' => $employe->id]) }}">{{ $employe->num_affaire  }}</a></td>
+
+
+
+
+                                    <td>{{ $employe->type  }}</td>
+                                    <td>{{ $employe->date }}</td>
+                                     <td>{{ $employe->partie_declarent }}</td>
+
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td>Pas des affaires positives</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                </table>
+
+            </div>
         </div>
-      </div>
-
-</div>
 @endsection

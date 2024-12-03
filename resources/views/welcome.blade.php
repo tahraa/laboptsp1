@@ -81,7 +81,7 @@
 
             <div class="content">
                 <div class=" m-b-md">
-                    Application de gestion des carnets familliaux
+                    Application de gestion des Registres
                 </div>
 
                 <div class="links">

@@ -57,10 +57,7 @@
                <label for="sexe">sexe</label>
                <select id="sexe" required="required" name="sexe" id="" class="form-control"><option {{ old('sexe') == 'masculin' ? 'selected' : '' }} value="masculin">masculin</option><option {{ old('sexe') == 'feminin' ? 'selected' : '' }} value="feminin">féminin</option></select>
              </div>
-             {{-- <div class="form-group">
-                <label for="nc">n°cnam</label>
-                <input id="nc" required="required" type="text" name="num_cnam" placeholder="Enter num_cnam" class="form-control" value="{{ old('num_cnam') }}"/>
-            </div> --}}
+            
             <div class="form-group">
                 <label for="dn">date naissance</label>
                 <input id="dn" required="required"  type="date" name="date_naissance" class="form-control" value="{{ old('date_naissance') }}"/>
@@ -74,15 +71,26 @@
                <select id="situation_civile" required="required" name="situation_civile" class="form-control"><option {{ old('situation_civile') == 'Célib.' ? 'selected' : '' }} value="Célib.">Célib</option><option {{ old('situation_civile') == 'Marié' ? 'selected' : '' }} value="Marié">Marié</option></select>
              </div>
              <div class="form-group">
+                <label for="dt">date de recrutement</label>
+                <input id="dt" required="required"  type="date" name="date_recrutement" class="form-control" value="{{ old('date_recrutement') }}"/>
+            </div>
+            <div class="form-group">
+                <label for="dl">delai</label>
+                <input id="dl" maxlength="2" required="required" type="text" name="delai" placeholder="Enter le delai du contrant" class="form-control" value="{{ old('delai') }}"/>
+              </div>
+             <div class="form-group">
                 <label for="service">fonction : </label>
                 <label class="radio-inline"><input value="EMAM" type="radio" name="service" required>EMAM</label>
                 <label class="radio-inline"><input value="DREN" type="radio" name="service" required>DREN</label>
                 <label class="radio-inline"><input value="GENDARMERIE" type="radio" name="service" required>GENDARMERIE</label>
+                <label class="radio-inline"><input value="GENDARMERIE" type="radio" name="service" required>ENSEIGENT</label>
              </div>
+             
              <div class="form-group">
                 <label for="etablissement">établissement : </label>
                 <label class="radio-inline"><input value="NDB" type="radio" name="etablissement" required>NDB</label>
                 <label class="radio-inline"><input value="ZTE" type="radio" name="etablissement" required>ZTE</label>
+                <label class="radio-inline"><input value="ZTE" type="radio" name="etablissement" required>NKTT</label>
              </div>
              <div class="form-group">
                <label for="photo">photo</label>

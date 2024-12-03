@@ -14,6 +14,6 @@ class CoupleImportController extends Controller
 
     public function import(Request $request){
         Excel::import(new CoupleImport, $request->file);
-        return redirect('/couples');
+        return redirect('/commissariats');
     }
 }

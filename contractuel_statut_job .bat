@@ -1,0 +1,1 @@
+cd C:\xampp\htdocs\LivretFamilial && php artisan command:contractuel_rule

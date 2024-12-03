@@ -8,7 +8,7 @@
     <div class="card mt-3">
         @if ($user_logged_in->profile == 'profil2' || $user_logged_in->profile == 'profil3')
 
-        <div class="card-header text-primary"><h2>Modifier/Employé</h2>
+        <div class="card-header text-primary"><h2>Modifier/Affaire</h2>
         </div>
         <div class="card-body">
             <div class="row">
@@ -31,46 +31,85 @@
                         <p>{{ Session::get('success') }}</p>
                     </div>
                 @endif
-                <p>Employé:  nombre couple : {{ $employe->couples_count }}   nombre enfants : {{ $employe->enfants_count }}</p>
+                <p class="card-header text-primary">Affaire:  Nbre intervenants: {{ $employe->intervenants_count }}   Documents:    @if ($employe->rapports_count == '1')
+                    <i class="fas fa-check"></i> OUI
+                    @endif
+                    @if ($employe->rapports_count == '0')
+                    <i class="fas fa-times"></i> NON
+                    @endif</p>
+                    <p> </p>
                 <div class="table-responsive">
-                        <img src="{{ asset('/emp_images/'.$employe->matricule.'.jpg') }}" width="100px" height="100px">
+
                         <div class="form-group">
-                          <label for="mt">matricule</label>
-                          <input   id="mt" required="required" type="text" name="matricule" placeholder="Enter matricule" class="form-control" value="{{ old('matricule', $employe->matricule ?? null) }}"/>
+                          <label for="mt">Numéro d'Affaire</label>
+                          <input  maxlength="6" required="required" type="text" name="num_affaire"  class="form-control" value="{{ old('num_affaire', $employe->num_affaire ?? null) }}"/></td>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="nni">Type</label>
+                          <input id="nni" required="required" type="text" name="type"  class="form-control" value="{{ old('type', $employe->type ?? null) }}"/>
+                        </div>
+
+
+                        <div class="form-group">
+                          <label for="dn">Date de réception</label>
+                          <input id="dn" required="required"  type="date" name="date" class="form-control" value="{{ old('date', $employe->date) }}"/>
                         </div>
                         <div class="form-group">
-                          <label for="nni">nni</label>
-                          <input id="nni" required="required" type="text" name="nni" placeholder="Enter nni" class="form-control" value="{{ old('nni', $employe->nni ?? null) }}"/>
-                        </div>
+                            <label for="prenom">Lieu d'infraction</label>
+                            <input id="prenom" type="text" name="lieu_crime"  class="form-control" value="{{ old('lieu d\'intervention', $employe->lieu_crime?? null) }}"/>
+                          </div>
+                          <div class="form-group">
+                            <label for="nom">Référence</label>
+                            <input id="nom" required="required" type="text" name="reference"  class="form-control" value="{{ old('référence', $employe->reference ?? null) }}"/>
+                          </div>
+						         <div class="form-group">
+                            <label for="nom">Date et periode d'intervention</label>
+                            <input id="nom"  type="text" name="periode"  class="form-control" value="{{ old('periode', $employe->periode ?? null) }}"/>
+                          </div>
                         <div class="form-group">
-                          <label for="nom">nom</label>
-                          <input id="nom" required="required" type="text" name="nom" placeholder="Enter nom" class="form-control" value="{{ old('nom', $employe->nom ?? null) }}"/>
+                            <label for="dn">Date de prélèvement</label>
+                            <input id="dn"   type="date" name="date_prelevement" class="form-control" value="{{ old('date_prelevement', $employe->date_prelevement) }}"/>
+                          </div>
+                          <div class="form-group">
+                            <label for="dn">Lieu de prélèvement</label>
+                            <input id="dn"  type="text" name="lieu_prelevement" class="form-control" value="{{ old('lieu_prelevement', $employe->lieu_prelevement) }}"/>
+                          </div>
+
+                          <div class="form-group">
+                            <label for="mt">Numéro d'affaire dans le commissariat</label>
+                            <input type="text" name="num_affaire_c"  class="form-control" value="{{ old('num_affaire_c', $employe->num_affaire_c ?? null) }}"/></td>
+                          </div>
+
+                          <div class="form-group">
+                            <label for="mt">Victime</label>
+                            <input   type="text" name="victim"  class="form-control" value="{{ old('victim', $employe->victim ?? null) }}"/></td>
+                          </div>
+                        
+						<div class="form-group">
+                            <label for="mt">Numéro Rapport(s)</label>
+                            <input   type="text" name="num_rapport"  class="form-control" value="{{ old('num_rapport', $employe->num_rapport ?? null) }}"/></td>
+                          </div>
+
+                          <div class="form-group">
+                            <label for="mt">Numéro Soit(s) transmis</label>
+                            <input  type="text" name="num_soit"  class="form-control" value="{{ old('num_soit', $employe->num_soit ?? null) }}"/></td>
+                          </div>
+
+
+   <div class="form-group">
+                          <label for="region">Résultat</label>
+                        <select  id="resultat" type="text" name="resultat" class="form-control"><option value={{ old('resultat', $employe->resultat ?? null) }}></option><option value="1">Positive</option>
+</select >
                         </div>
-                        <div class="form-group">
-                          <label for="prenom">prénom</label>
-                          <input id="prenom" required="required" type="text" name="prenom" placeholder="Enter prénom" class="form-control" value="{{ old('prenom', $employe->prenom ?? null) }}"/>
-                        </div>
-                        <div class="form-group">
-                          <label for="dn">date naissance</label>
-                          <input id="dn" required="required"  type="date" name="date_naissance" class="form-control" value="{{ old('date_naissance', $employe->date_naissance) }}"/>
-                        </div>
-                        <div class="form-group">
-                          <label for="st">statut</label>
-                          <select id="st"  required="required" name="statut" id="" class="form-control"><option {{ $employe->statut ? 'selected' : '' }} value="1"  >assuré</option><option value="0" {{ !$employe->statut ? 'selected' : '' }} >non assuré</option></select>
-                        </div>
-                        <div class="form-group">
-                          <label for="st">sexe</label>
-                          <select id="st" required="required" name="sexe" id="" class="form-control"><option {{ $employe->sexe == 'masculin' ? 'selected' : '' }}  value="masculin">masculin</option><option {{ $employe->sexe == 'feminin'  ? 'selected' : '' }} value="feminin">féminin</option></select>
-                        </div>
-                        <div class="form-group">
-                          <label for="photo">photo</label>
-                          <input id="photo"  type="file" name="emp_image" class="form-control" value=""/>
-                        </div>
+
+
+                      
 
 
 
 
-                </div>
+                <div>
                     <button type="submit" class="btn btn-success">Modifier</button>
             </form>
         </div>

@@ -7,7 +7,7 @@ use Illuminate\Support\Carbon;
 
 class Beneficier extends Model
 {
-    protected $fillable = ['nni', 'nom', 'prenom', 'matricule', 'statut', 'sexe', 'updated_at', 'created_at', 'date_naissance', 'situation_civile', 'service','image','num_cnam','type', 'etablissement'];
+    protected $fillable = ['nni', 'nom', 'prenom', 'matricule', 'statut', 'sexe', 'updated_at', 'created_at', 'date_naissance', 'situation_civile', 'service','image','num_cnam','type', 'etablissement','delai','date_recrutement'];
 
     public function getDateFormat(){
         return 'Y-m-d H:i:s.v';

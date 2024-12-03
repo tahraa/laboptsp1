@@ -11,44 +11,44 @@ use App\Exports\CouplesbExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
-class ExcelController extends Controller 
+class ExcelController extends Controller
 {
-   
-    public function users() 
+
+    public function users()
     {
         return Excel::download(new Usersexport, 'users.xlsx');
 
     }
-    public function beneficiers() 
+    public function beneficiers()
     {
         return Excel::download(new BeneficiersExport, 'Tiers.xlsx');
 
     }
 
-    public function employes() 
+    public function employes()
     {
-        return Excel::download(new EmployesExport, 'employes.xlsx');
+        return Excel::download(new EmployesExport, 'Affaires.xlsx');
 
     }
-    
-    public function enfants() 
+
+    public function enfants()
     {
         return Excel::download(new EnfantsExport, 'enfants.xlsx');
 
     }
-    public function enfantsb() 
+    public function enfantsb()
     {
         return Excel::download(new EnfantsbExport, 'enfantsTiers.xlsx');
 
     }
 
-    public function conjoints() 
+    public function conjoints()
     {
-        return Excel::download(new CouplesExport, 'conjoints.xlsx');
+        return Excel::download(new CouplesExport, 'Parties_déclarent.xlsx');
 
     }
 
-    public function conjointsb() 
+    public function conjointsb()
     {
         return Excel::download(new CouplesbExport, 'conjointsTiers.xlsx');
 

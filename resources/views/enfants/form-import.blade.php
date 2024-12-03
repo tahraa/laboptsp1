@@ -7,7 +7,9 @@
 @if ($user_logged_in->profile == 'profil3')
     <form action="{{ route('enfants-import') }}" enctype="multipart/form-data" method="POST">
         @csrf
-
+        <div class="card-header text-primary"><h4>Import & Export/Enfants des Employés</h4>
+        </div>
+        <div class="card-body">
         <div class="form-group">
         <label for="my-input">Ficher Excel</label>
         <input required="required" id="my-input" class="form-control-file" type="file" name="file">
@@ -16,7 +18,8 @@
             Importer
         </button>
     </form>
-
+    </div>
+        <div class="card-body">
     <div class="row justify-content">
     <div class="card">
     <div class="card-header"> Exporter le liste des Enfants</div>
@@ -26,7 +29,7 @@
    
     <button type="submit" class="btn btn-primary">
     Download
-    </button></form></div> </div> 
+    </button></form></div> </div>  </div> 
 
 
     @else

@@ -3,15 +3,12 @@
 namespace App\Imports;
 
 use App\Beneficier;
-use App\Couple;
+
 use App\CoupleB;
-use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\SkipsFailures;
-use Maatwebsite\Excel\Concerns\SkipsOnFailure;
+
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithValidation;
-use Maatwebsite\Excel\Validators\Failure;
+
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class CouplebImport implements ToModel, WithHeadingRow

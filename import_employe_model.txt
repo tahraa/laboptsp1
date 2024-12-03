@@ -1,3 +1,3 @@
 ------------------------------------------------------------------------------------
-nni nom prenom  matricule num_cnam   sexe  date_naissance   service situation_civile  
+num_affaire type partie_declarent  num_affaire_c  date  lieu_crime  num_soit
 -------------------------------------------------------------------------------------
