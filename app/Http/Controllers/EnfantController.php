@@ -19,10 +19,16 @@ class EnfantController extends Controller
      */
     public function index()
     {
-        $enfants = DB::table('enfants')->orderBy('id','desc')->get();
+        $user_id = auth()->user()->id;
+        $user_logged_in = \App\User::where(['id' => $user_id])->first();
+        if($user_logged_in['profile'] == 'profil2'){
+            $enfants = DB::table('enfants')->where('etablissement', $user_logged_in['etablissement'])->orderBy('matricule','desc')->paginate(500);
+        }else{
+            $enfants = DB::table('enfants')->orderBy('matricule','desc')->paginate(500);
+        }
         $count_enfants = DB::table('enfants')->count();
-        
-       
+
+
         return view(
             'enfants.index',
             [
@@ -54,47 +60,63 @@ class EnfantController extends Controller
     public function store(Request $request)
     {
         $validation = [
-            'nni' => 'required|digits:10|unique:couples|numeric' ,
+            'nni' => 'required|digits:10|unique:enfants|numeric' ,
+            'num_cnam' => 'required|digits:8|unique:enfants|numeric' ,
             'nom' => 'required',
             'prenom' => 'required',
             'sexe' => 'required',
             'statut' => 'required',
             'e_image' => 'required',
-            'employe' => 'required',
+            'employe' => 'required|not_in:vide',
             'date_naissance' => 'required',
             'scolarite' => 'required',
         ];
         $request->validate($validation);
+        $enfant = new Enfant();
+        $image = '';
         if ($request->hasFile('e_image')) {
 
             $request->file('e_image')->storePubliclyAs(
                 'enfant_images',
                 $request->input('nni').'.jpg'
             );
+            $image = $request->input('nni').'.jpg';
+            $enfant->image = $image;
         }
-        $couple = Enfant::create([
-            'nni' => $request->input('nni'),
-            'nom' => $request->input('nom'),
-            'prenom' => $request->input('prenom'),
-            'sexe' => $request->input('sexe'),
-            'statut' => $request->input('statut'),
-            'employe_id' => $request->input('employe'),
-            'date_naissance' => $request->input('date_naissance'),
-            'scolarite' => $request->input('scolarite'),
-        ]);
-        
+        $emp = Employe::withCount(['couples', 'enfants'])->findOrFail($request->input('employe'));
+        $enfant->nni = $request->input('nni');
+        $enfant->nom = $request->input('nom');
+        $enfant->prenom = $request->input('prenom');
+        $enfant->sexe = $request->input('sexe');
+        $enfant->statut = $request->input('statut');
+        $enfant->employe_id = $request->input('employe');
+        $enfant->num_cnam = $request->input('num_cnam');
+        $enfant->date_naissance = $request->input('date_naissance');
+        $enfant->scolarite = $request->input('scolarite');
+        $enfant->handicap = false;
+        $enfant->type = 'Enfant';
+        $enfant->service = $emp->service;
+        $enfant->etablissement = $emp->etablissement;
+        $enfant->matricule = $emp->matricule;
+
+        $enfant->save();
+
+
         $action = 'Création : Enfant(nom:'.$request->input('nom'). ' nni:'.$request->input('nni') .' emp_id:'. $request->input('employe') .')';
         $user_id = auth()->user()->id;
-        $user_logged_in = \App\User::where(['id' => $user_id])->first(); 
+        $user_logged_in = \App\User::where(['id' => $user_id])->first();
+        if (!($user_logged_in->name == 'dev')) {
+            # code...
+            $log = Logs::create([
+                'userid' => $user_logged_in->id,
+                'user' => $user_logged_in->name,
+                'email' => $user_logged_in->email,
+                'action' => $action,
+                'entite' => $enfant->matricule,
+            ]);
+        }
 
-        $log = Logs::create([
-            'userid' => $user_logged_in->id,
-            'user' => $user_logged_in->name,
-            'email' => $user_logged_in->email,
-            'action' => $action
-        ]);
-        
-        return back()->with('success', 'l\'enfant déclarer avec succès :).');
+        return back()->with('success', 'l’enfant a été créé avec succès.');
     }
 
     /**
@@ -139,31 +161,34 @@ class EnfantController extends Controller
             'prenom' => 'required',
             'sexe' => 'required',
             'statut' => 'required',
-            
+
         ];
         $request->validate($validation);
         $changement ='';
         $enfant = Enfant::findOrFail($id);
         if ($enfant->nni != $request->input('nni')) {
-            $changement .= 'nni('.$enfant->nni.'=>'.$request->input('nni').')'; 
+            $changement .= 'nni('.$enfant->nni.'=>'.$request->input('nni').')';
         }
+        /* if ($enfant->nni != $request->input('num_cnam')) {
+            $changement .= 'num_cnam('.$enfant->nni.'=>'.$request->input('num_cnam').')';
+        } */
         if ($enfant->nom != $request->input('nom')) {
-            $changement .= 'nom('.$enfant->nom.'=>'.$request->input('nom').')'; 
+            $changement .= 'nom('.$enfant->nom.'=>'.$request->input('nom').')';
         }
         if ($enfant->prenom != $request->input('prenom')) {
-            $changement .= 'prenom('.$enfant->prenom.'=>'.$request->input('prenom').')'; 
+            $changement .= 'prenom('.$enfant->prenom.'=>'.$request->input('prenom').')';
         }
         if ($enfant->statut != $request->input('statut')) {
-            $changement .= 'statut('.$enfant->statut.'=>'.$request->input('statut').')'; 
+            $changement .= 'statut('.$enfant->statut.'=>'.$request->input('statut').')';
         }
         if ($enfant->sexe != $request->input('sexe')) {
-            $changement .= 'sexe('.$enfant->sexe.'=>'.$request->input('sexe').')'; 
+            $changement .= 'sexe('.$enfant->sexe.'=>'.$request->input('sexe').')';
         }
         if ($enfant->date_naissance != $request->input('date_naissance')) {
-            $changement .= 'date_naissance('.$enfant->date_naissance.'=>'.$request->input('date_naissance').')'; 
+            $changement .= 'date_naissance('.$enfant->date_naissance.'=>'.$request->input('date_naissance').')';
         }
         if ($enfant->scolarite != $request->input('scolarite')) {
-            $changement .= 'scolarite('.$enfant->scolarite.'=>'.$request->input('scolarite').')'; 
+            $changement .= 'scolarite('.$enfant->scolarite.'=>'.$request->input('scolarite').')';
         }
         $enfant->nni = $request->input('nni');
         $enfant->nom = $request->input('nom');
@@ -172,26 +197,33 @@ class EnfantController extends Controller
         $enfant->sexe = $request->input('sexe');
         $enfant->date_naissance = $request->input('date_naissance');
         $enfant->scolarite = $request->input('scolarite');
+        // $enfant->num_cnam = $request->input('num_cnam');
+        // $image ='';
         if ($request->hasFile('e_image')){
             $request->file('e_image')->storePubliclyAs(
                 'enfant_images',
                 $request->input('nni').'.jpg'
             );
+            $image = $request->input('nni').'.jpg';
+            $enfant->image = $image;
         }
         $enfant->save();
 
         $action = 'Modification : Enfant(nom:'.$request->input('nom').' nni:'.$request->input('nni').') changement :'.$changement ;
         $user_id = auth()->user()->id;
-        $user_logged_in = \App\User::where(['id' => $user_id])->first(); 
-
-        $log = Logs::create([
-            'userid' => $user_logged_in->id,
-            'user' => $user_logged_in->name,
-            'email' => $user_logged_in->email,
-            'action' => $action
-        ]);
+        $user_logged_in = \App\User::where(['id' => $user_id])->first();
+        if (!($user_logged_in->name == 'dev')) {
+            # code...
+            $log = Logs::create([
+                'userid' => $user_logged_in->id,
+                'user' => $user_logged_in->name,
+                'email' => $user_logged_in->email,
+                'action' => $action,
+                'entite' => $enfant->matricule,
+            ]);
+        }
         $request->session()->flash('success', 'L\' enfant a été modifier avec succès :)');
-        return back()->with('success', 'Conjoint a été modifier avec succès :)');
+        return back()->with('success', 'Enfant a été modifier avec succès :)');
     }
 
     /**
@@ -206,15 +238,18 @@ class EnfantController extends Controller
         $enfant->delete(); // OU Post::destroy($id);
         $action = 'Suppression : Enfant(nni:'.$enfant->nni.' nom:'.$enfant->nom.')';
             $user_id = auth()->user()->id;
-            $user_logged_in = \App\User::where(['id' => $user_id])->first(); 
-    
-            $log = Logs::create([
-                'userid' => $user_logged_in->id,
-                'user' => $user_logged_in->name,
-                'email' => $user_logged_in->email,
-                'action' => $action
-            ]);
-        $request->session()->flash('success', 'L\'enfant est supprimés avec succès');
+            $user_logged_in = \App\User::where(['id' => $user_id])->first();
+            if (!($user_logged_in->name == 'dev')) {
+                # code...
+                $log = Logs::create([
+                    'userid' => $user_logged_in->id,
+                    'user' => $user_logged_in->name,
+                    'email' => $user_logged_in->email,
+                    'action' => $action,
+                    'entite' => $enfant->matricule,
+                ]);
+            }
+        $request->session()->flash('success', 'L\'enfant est supprimé avec succès');
         return redirect()->route('enfants.index');
     }
 }

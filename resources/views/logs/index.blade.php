@@ -2,7 +2,7 @@
 @section('content')
 @php
     $user_id = auth()->user()->id;
-    $log_logged_in = \App\User::where(['id' => $user_id])->first();  
+    $log_logged_in = \App\User::where(['id' => $user_id])->first();
 @endphp
         <div class="card">
             <img class="card-img-top" src="holder.js/100x180/" alt="">
@@ -28,29 +28,27 @@
                         <p>{{ Session::get('denied') }}</p>
                     </div>
                 @endif
-                
+
                 <h4 class="card-title">Liste des logs</h4>
-            
+
             <p class="card-text text-success font-weight-bold">Total : {{ $count_logs }}</p>
                     <div class="table-responsive">
-
-                    
+                {{ $logs->links() }}
                 <table
                     class="table"
                     data-toggle="table"
-                    data-pagination="true"
+                    data-pagination="false"
                     data-search="true"
                     data-locale='fr-FR'
-                    data-pagination-h-align="left"
-                    data-pagination-detail-h-align="right"
-                    data-page-list="[5, 10, 25, 50, 100, 200, All]"
+
                         >
                     <thead class="thead-inverse">
                         <tr>
                             <th data-field="nni">user</th>
                             <th data-field="nom">email</th>
-                            <th data-field="prenom">date_création</th>
-                            <th data-field="prenom">description</th>
+                            <th data-field="date_creation">date_création</th>
+                           <th data-field="entites">Matricule Concerné</th>
+                            <th data-field="description">description</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -61,8 +59,10 @@
                                     <td>
                                         {{ $log->created_at }}
                                     </td>
+                                  <td>
+                                        {{ $log->entite }}
+                                    </td>
                                     <td>
-                                        
                                         {{substr($log->action, 0, 20)}}...
                                     </td>
                                 </tr>

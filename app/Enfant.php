@@ -7,7 +7,7 @@ use Illuminate\Support\Carbon;
 
 class Enfant extends Model
 {
-    protected $fillable = ['nni', 'nom', 'prenom', 'statut', 'sexe', 'employe_id', 'date_naissance', 'scolarite'];
+    protected $fillable = ['nni', 'nom', 'prenom', 'statut', 'sexe', 'employe_id', 'date_naissance', 'scolarite', 'matricule', 'type', 'handicap', 'service', 'image','num_cnam'];
     public function getDateFormat(){
         return 'Y-m-d H:i:s.v';
     }
@@ -23,5 +23,10 @@ class Enfant extends Model
 
     public function employe(){
         return $this->belongsTo('App\Employe');
+    }
+
+
+    public function beneficier(){
+        return $this->belongsTo('App\Beneficier');
     }
 }

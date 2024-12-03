@@ -8,14 +8,10 @@ use Illuminate\Support\Facades\DB;
 
 class LogsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        $logs = DB::table('logs')->orderBy('id','desc')->get();
+        $logs = DB::table('logs')->orderBy('id','desc')->paginate(500);
         $count_logs = DB::table('logs')->count();
         return view(
             'logs.index',
@@ -36,23 +32,12 @@ class LogsController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         return view('logs.show', [
@@ -60,12 +45,7 @@ class LogsController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
         //

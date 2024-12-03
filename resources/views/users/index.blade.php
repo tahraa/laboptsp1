@@ -45,19 +45,13 @@
                         >
                     <thead class="thead-inverse">
                         <tr>
-                            <th data-field="nni">username</th>
-                            <th data-field="nom">email</th>
-                            <th data-field="prenom">date_création</th>
-                            <th data-field="prenom">profil</th>
-                                @if ($user_logged_in->profile == 'profil1')
-                            
-                                @endif
-                                @if ($user_logged_in->profile == 'profil2')
-                                    <th>action</th>
-                                @endif
-                                @if ($user_logged_in->profile == 'profil3')
-                                    <th>action</th>
-                                @endif
+                            <th data-field="name">username</th>
+                            <th data-field="email">email</th>
+                            <th data-field="created_at">date_création</th>
+                            <th data-field="profile">profil</th>
+                            @if ($user_logged_in->profile == 'profil3' || $user_logged_in->profile == 'profil2')
+                                <th>action</th>
+                            @endif
                         </tr>
                         </thead>
                         <tbody>
@@ -66,14 +60,11 @@
                                     <td><a href="{{ route('users.show', ['user' => $user->id]) }}">{{ $user->name }}</a></td>
                                     <td>{{ $user->email }}</td>
                                     <td>
-                                        date_création : {{ date('d-m-Y', strtotime($user->created_at)) }}
-
+                                     {{-- {{ date('d-m-Y', strtotime($user->created_at)) }} --}}
+                                        {{ $user->created_at }}
                                     </td>
                                     <td>{{ $user->profile }}</td>
                                     <td>
-                                        @if ($user_logged_in->profile == 'profil1')
-                            
-                                        @endif
                                         @if ($user_logged_in->profile == 'profil2')
                                             <a  class="btn btn-success btn-sm" type="button" href="{{ route('users.edit', ['user' => $user->id]) }}"><i class="fas fa-edit"></i></a>
                                         @endif

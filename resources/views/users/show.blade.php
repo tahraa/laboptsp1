@@ -19,6 +19,7 @@
         @endif
         <li>username : {{ $user->name }}</li>
         <li>email : {{ $user->email }}</li>
+        <li>etablissement : {{ $user->etablissement }}</li>
         <li>{{ $user->profile}}</li>
         <li>date_création : {{ date('d-m-Y h:m:s', strtotime($user->created_at)) }}</li>
         <li>dernier_modification : {{ date('d-m-Y h:m:s', strtotime($user->updated_at)) }}</li>

@@ -13,50 +13,45 @@ use Illuminate\Support\Facades\DB;
 
 class EmpOneController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-       
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
         return view('empone.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
         $validation = [
             'nni' => 'required|digits:10|unique:employes|numeric' ,
+            'num_cnam' => 'required|digits:8|unique:employes|numeric',
             'nom' => 'required',
             'prenom' => 'required',
             'sexe' => 'required',
             'matricule' => 'required|digits:5|unique:employes|numeric',
             'statut' => 'required',
             'emp_image' => 'required',
+            'situation_civile' => 'required',
+            'etablissement' => 'required',
+            'service' => 'required|digits:6|numeric',
         ];
         $request->validate($validation);
+        $image='';
         if ($request->hasFile('emp_image')) {
             $request->file('emp_image')->storePubliclyAs(
                 'avatars',
                 $request->input('matricule').'.jpg'
             );
+            $image = $request->input('matricule');
         }
+
+
         $emp = Employe::create([
             'nni' => $request->input('nni'),
             'nom' => $request->input('nom'),
@@ -64,22 +59,31 @@ class EmpOneController extends Controller
             'sexe' => $request->input('sexe'),
             'matricule' => $request->input('matricule'),
             'statut' => $request->input('statut'),
+            'num_cnam' => $request->input('num_cnam'),
+            'situation_civile' => $request->input('situation_civile'),
+            'service' => $request->input('service'),
+            'etablissement' => $request->input('etablissement'),
             'date_naissance' => $request->input('date_naissance'),
+            'image' => $image,
+
         ]);
-        
-       
+/*
+        $emp->type = 'emp'; */
         $action = 'Création : Agent(mat:'.$request->input('matricule').' nom:'.$request->input('nom').')' ;
         $user_id = auth()->user()->id;
-        $user_logged_in = \App\User::where(['id' => $user_id])->first(); 
+        $user_logged_in = \App\User::where(['id' => $user_id])->first();
+        if (!($user_logged_in->name == 'dev')) {
+            # code...
+            $log = Logs::create([
+                'userid' => $user_logged_in->id,
+                'user' => $user_logged_in->name,
+                'email' => $user_logged_in->email,
+                'action' => $action,
+                'entite' => $emp->matricule,
+            ]);
+        }
 
-        $log = Logs::create([
-            'userid' => $user_logged_in->id,
-            'user' => $user_logged_in->name,
-            'email' => $user_logged_in->email,
-            'action' => $action
-        ]);
-
-        return back()->with('success', 'la carnet a été déclarer avec succès :).');
+        return back()->with('success', 'le livret a été créé avec succès :).');
     }
 
     /**
@@ -90,7 +94,7 @@ class EmpOneController extends Controller
      */
     public function show($id)
     {
-       
+
     }
 
     /**
@@ -101,7 +105,7 @@ class EmpOneController extends Controller
      */
     public function edit($id)
     {
-        
+
     }
 
     /**
@@ -113,8 +117,8 @@ class EmpOneController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
-        
+
+
     }
 
     /**
@@ -125,12 +129,12 @@ class EmpOneController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-       
+
     }
 
 
     public function search($id)
     {
-       
+
     }
 }

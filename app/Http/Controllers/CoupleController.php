@@ -10,14 +10,17 @@ use Illuminate\Support\Facades\DB;
 
 class CoupleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        $couples = DB::table('couples')->orderBy('id','desc')->get();
+        $user_id = auth()->user()->id;
+        $user_logged_in = \App\User::where(['id' => $user_id])->first();
+        if($user_logged_in['profile'] == 'profil2'){
+            $couples = DB::table('couples')->where('etablissement', $user_logged_in['etablissement'])->orderBy('matricule','desc')->paginate(500);
+        }else{
+            $couples = DB::table('couples')->orderBy('matricule','desc')->paginate(500);
+        }
+        
         $count_couples = DB::table('couples')->count();
         return view(
             'couples.index',
@@ -51,64 +54,73 @@ class CoupleController extends Controller
     {
         $validation = [
             'nni' => 'required|digits:10|unique:couples|numeric' ,
+            'num_cnam' => 'required|digits:8|unique:couples|numeric' ,
             'nom' => 'required',
             'prenom' => 'required',
-            'sexe' => 'required',
             'statut' => 'required',
             'c_image' => 'required',
-            'employe' => 'required',
+            'employe' => 'required|not_in:vide',
             'date_mariage' => 'required',
             'date_naissance' => 'required',
         ];
         $request->validate($validation);
         // $emp = Employe::find($request->input('employe'));
         $emp = Employe::withCount(['couples', 'enfants'])->findOrFail($request->input('employe'));
+        $sexe = ($emp->sexe == 'masculin') ? 'feminin' : 'masculin';
         //$emp->couples_count;
-        if($emp->couples_count >= 2){
-            return back()->with('denied', 'l\'employé possède déja la limite');
+        if( ($emp->couples_count >= 2 && $emp->sexe == 'masculin') || ($emp->couples_count >= 1 && $emp->sexe == 'feminin') ){
+            return back()->with('denied', 'l\'agent possède déja la limite');
         }else{
-
+            /*   if($emp->sexe='masculin') { */
+            $couple = new Couple();
             if ($request->hasFile('c_image')) {
 
                 $request->file('c_image')->storePubliclyAs(
                     'couple_images',
                     $request->input('nni').'.jpg'
                 );
+                $image = $request->input('nni').'.jpg';
+                $couple->image = $image;
             }
 
-            $couple = Couple::create([
-                'nni' => $request->input('nni'),
-                'nom' => $request->input('nom'),
-                'prenom' => $request->input('prenom'),
-                'sexe' => $request->input('sexe'),
-                'statut' => $request->input('statut'),
-                'date_mariage' => $request->input('date_mariage'),
-                'date_naissance' => $request->input('date_naissance'),
-                'employe_id' => $request->input('employe')
-            ]);
-            
-            $action = 'Création : Conjoint(nom:'.$request->input('nom').' nni:'.$request->input('nni') .' emp_id:'. $request->input('employe') .')';
+            $couple->nni = $request->input('nni');
+            $couple->nom = $request->input('nom');
+            $couple->prenom = $request->input('prenom');
+            $couple->num_cnam = $request->input('num_cnam');
+            // $couple->sexe = !($emp->sexe);
+            $couple->sexe = $sexe;
+            $couple->statut = $request->input('statut');
+            $couple->date_mariage = $request->input('date_mariage');
+            $couple->date_naissance = $request->input('date_naissance');
+            $couple->employe_id = $request->input('employe');
+            $couple->matricule = $emp->matricule;
+            $couple->situation_civile = 'Marié';
+            $couple->service = $emp->service;
+            $couple->etablissement = $emp->etablissement;
+            $couple->type = 'Conjoint';
+
+            $couple->save();
+
+
+            $action = 'Création : Conjoint(nom:'.$request->input('nom').' '.$request->input('prenom') .')';
             $user_id = auth()->user()->id;
-            $user_logged_in = \App\User::where(['id' => $user_id])->first(); 
-    
-            $log = Logs::create([
-                'userid' => $user_logged_in->id,
-                'user' => $user_logged_in->name,
-                'email' => $user_logged_in->email,
-                'action' => $action
-            ]);
-    
-            return back()->with('success', 'Conjoint(e) déclarer avec succès :).');
+            $user_logged_in = \App\User::where(['id' => $user_id])->first();
+            if (!($user_logged_in->name == 'dev')) {
+                # code...
+                $log = Logs::create([
+                    'userid' => $user_logged_in->id,
+                    'user' => $user_logged_in->name,
+                    'email' => $user_logged_in->email,
+                    'action' => $action,
+                    'entite' =>  $couple->matricule,
+                ]);
+            }
+
+            return back()->with('success', 'le conjoint a été créé avec succès :).');
         }
-       
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         return view('couples.show', [
@@ -143,53 +155,62 @@ class CoupleController extends Controller
             'nni' => 'required|digits:10|numeric',
             'nom' => 'required',
             'prenom' => 'required',
-            'sexe' => 'required',
             'statut' => 'required'
         ];
         $request->validate($validation);
         $changement ='';
         $couple = Couple::findOrFail($id);
         if ($couple->nni != $request->input('nni')) {
-            $changement .= 'nni('.$couple->nni.'=>'.$request->input('nni').')'; 
+            $changement .= 'nni('.$couple->nni.'=>'.$request->input('nni').')';
+        }
+        if ($couple->nni != $request->input('num_cnam')) {
+            $changement .= 'num_cnam('.$couple->nni.'=>'.$request->input('num_cnam').')';
         }
         if ($couple->nom != $request->input('nom')) {
-            $changement .= 'nom('.$couple->nom.'=>'.$request->input('nom').')'; 
+            $changement .= 'nom('.$couple->nom.'=>'.$request->input('nom').')';
         }
         if ($couple->prenom != $request->input('prenom')) {
-            $changement .= 'prenom('.$couple->prenom.'=>'.$request->input('prenom').')'; 
+            $changement .= 'prenom('.$couple->prenom.'=>'.$request->input('prenom').')';
         }
         if ($couple->statut != $request->input('statut')) {
-            $changement .= 'statut('.$couple->statut.'=>'.$request->input('statut').')'; 
+            $changement .= 'statut('.$couple->statut.'=>'.$request->input('statut').')';
         }
-        if ($couple->sexe != $request->input('sexe')) {
-            $changement .= 'sexe('.$couple->sexe.'=>'.$request->input('sexe').')'; 
-        }
+        // if ($couple->sexe != $request->input('sexe')) {
+        //     $changement .= 'sexe('.$couple->sexe.'=>'.$request->input('sexe').')';
+        // }
         $couple->nni = $request->input('nni');
         $couple->nom = $request->input('nom');
         $couple->prenom = $request->input('prenom');
         $couple->statut = $request->input('statut');
-        $couple->sexe = $request->input('sexe');
+      /*   $couple->sexe = $request->input('sexe'); */
+        // $couple->num_cnam = $request->input('num_cnam');
+        // $image = '';
         if ($request->hasFile('c_image')){
             $request->file('c_image')->storePubliclyAs(
                 'couple_images',
                 $request->input('nni').'.jpg'
             );
+            $image = $request->input('nni').'.jpg';
+            $couple->image = $image;
         }
         $couple->save();
 
-        $action = 'Modification : Conjoint(nom:'.$request->input('nom').' nni:'.$request->input('nni').') changement :'.$changement ;
+        $action = 'Modification : Conjoint(nom:'.$request->input('nom').' '.$request->input('prenom').') changement :'.$changement ;
         $user_id = auth()->user()->id;
-        $user_logged_in = \App\User::where(['id' => $user_id])->first(); 
+        $user_logged_in = \App\User::where(['id' => $user_id])->first();
+        if (!($user_logged_in->name == 'dev')) {
+            # code...
+            $log = Logs::create([
+                'userid' => $user_logged_in->id,
+                'user' => $user_logged_in->name,
+                'email' => $user_logged_in->email,
+                'action' => $action,
+                'entite' => $couple->matricule,
+            ]);
+        }
 
-        $log = Logs::create([
-            'userid' => $user_logged_in->id,
-            'user' => $user_logged_in->name,
-            'email' => $user_logged_in->email,
-            'action' => $action
-        ]);
-
-        $request->session()->flash('success', 'L\' employé a été modifier avec succès :)');
-        return back()->with('success', 'Conjoint a été modifier avec succès :)');
+        $request->session()->flash('success', 'Conjoint a été modifié avec succès :)');
+        return back()->with('success', 'Conjoint a été modifié avec succès :)');
         //return redirect()->route('couples.index');
     }
 
@@ -203,16 +224,19 @@ class CoupleController extends Controller
     {
         $couple = Couple::find($id);
         $couple->delete(); // OU Post::destroy($id);
-        $action = 'Suppression : Conjoint(nni:'.$couple->nni.' nom:'.$couple->nom.')';
+        $action = 'Suppression : Conjoint(nom: '.$couple->nom.' '.$couple->prenom.')';
             $user_id = auth()->user()->id;
-            $user_logged_in = \App\User::where(['id' => $user_id])->first(); 
-    
-            $log = Logs::create([
-                'userid' => $user_logged_in->id,
-                'user' => $user_logged_in->name,
-                'email' => $user_logged_in->email,
-                'action' => $action
-            ]);
+            $user_logged_in = \App\User::where(['id' => $user_id])->first();
+            if (!($user_logged_in->name == 'dev')) {
+                # code...
+                $log = Logs::create([
+                    'userid' => $user_logged_in->id,
+                    'user' => $user_logged_in->name,
+                    'email' => $user_logged_in->email,
+                    'action' => $action,
+                    'entite' => $couple->matricule,
+                ]);
+            }
         $request->session()->flash('success', 'Conjoint(e) est supprimé(e) avec succès');
         return redirect()->route('couples.index');
     }

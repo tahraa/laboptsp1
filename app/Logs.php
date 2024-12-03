@@ -7,11 +7,11 @@ use Illuminate\Support\Carbon;
 
 class Logs extends Model
 {
-    protected $fillable = ['user', 'email', 'action', 'updated_at', 'created_at','userid'];
+    protected $fillable = ['user', 'email', 'action','entite', 'updated_at', 'created_at','userid'];
     public function getDateFormat(){
         return 'Y-m-d H:i:s.v';
     }
-    //public $timestamps  = false;
+    // public $timestamps  = false;
     public function fromDateTime($value)
     {
         // Only for MSSQL

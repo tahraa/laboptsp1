@@ -2,84 +2,86 @@
 @section('content')
 @php
     $user_id = auth()->user()->id;
-    $user_logged_in = \App\User::where(['id' => $user_id])->first();  
+    $user_logged_in = \App\User::where(['id' => $user_id])->first();
 @endphp
-<div class="container">
-    <div class="card mt-3">
+    <div class="card">
         @if ($user_logged_in->profile == 'profil2' || $user_logged_in->profile == 'profil3')
-        <div class="card-header text-primary"><h2>Ajouter/Conjoint(e) </h2>
+        <div class="card-header text-primary"><h2>Ajouter/Conjoint </h2>
         </div>
         <div class="card-body">
-            <form action="{{ route('couples.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @if ($errors->any())
-
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif
-
-                @if (Session::has('success'))
-                    <div class="alert alert-success text-center">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                        <p>{{ Session::get('success') }}</p>
-                    </div>
-                @endif
-                @if (Session::has('denied'))
-                <div class="alert alert-danger text-center">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                    <p>{{ Session::get('denied') }}</p>
-                </div>
-                @endif
-                {{-- <p>Employé:  nombre couple : {{ $employe->couples_count }}   nombre enfants : {{ $employe->enfants_count }}</p> --}}
-                <div class="table-responsive">
-                <table class="table table-bordered table-sm w-auto" id="">
-                    <tr>
-                        <th>nni</th>
-                        <th>nom</th>
-                        <th>prenom</th>
-                        <th>statut</th>
-                        <th>sexe</th>
-                        <th>date naissance</th>
-                        <th>date mariage</th>
-                        <th style="width: 100px">Employé</th>
-                        <th>photo</th>
-                    </tr>
-                    <tr>
-                        <td ><input style="width: 125px"  maxlength="10" required="required" type="text" name="nni" placeholder="Enter nni" class="form-control" value="{{ old('nni') }}"/></td>
-                        <td><input style="width: 125px" required="required" type="text" name="nom" placeholder="Enter nom" class="form-control" value="{{ old('nom') }}"/></td>
-                        <td><input style="width: 125px" required="required" type="text" name="prenom" placeholder="Enter prénom" class="form-control" value="{{ old('prenom') }}"/></td>
-                        <td><select style="width: 125px" required="required" name="statut" id="" class="form-control"><option  value="1"  >assuré</option><option value="0" >non assuré</option></select></td>
-                        <td><select style="width: 125px" required="required" name="sexe" id="" class="form-control"><option  value="masculin">masculin</option><option value="feminin">féminin</option></select></td>
-                        <td><input style="width: 200px" required="required"  type="date" name="date_naissance" class="form-control" /></td>
-                        <td><input style="width: 200px" required="required"  type="date" name="date_mariage" class="form-control" /></td>
-                        <td>
-                            <select style="width: 125px" required="required" id="" name="employe" class="form-control selectemp">
-                                <option value="vide">-------</option>
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <form action="{{ route('couples.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+                        @if (Session::has('success'))
+                            <div class="alert alert-success text-center">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                                <p>{{ Session::get('success') }}</p>
+                            </div>
+                        @endif
+                        @if (Session::has('denied'))
+                        <div class="alert alert-danger text-center">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                            <p>{{ Session::get('denied') }}</p>
+                        </div>
+                        @endif
+                        <div class="form-group">
+                            <label for="nni">nni</label>
+                            <input id="nni" maxlength="10" required="required" type="text" name="nni" placeholder="Enter nni" class="form-control" value="{{ old('nni') }}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="nom">nom</label>
+                            <input id="nom" required="required" type="text" name="nom" placeholder="Enter nom" class="form-control" value="{{ old('nom') }}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="prenom">prénom</label>
+                            <input id="prenom" required="required" type="text" name="prenom" placeholder="Enter prénom" class="form-control" value="{{ old('prenom') }}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="st">statut</label>
+                            <select id="st" required="required" name="statut" id="" class="form-control"><option {{ old('statut') == true ? 'selected' : '' }} value="1"  >assuré</option><option {{ old('statut') == false ? 'selected' : '' }} value="0" >non assuré</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="nc">n°cnam</label>
+                            <input id="nc" maxlength="8" required="required" type="text" name="num_cnam" placeholder="Enter num_cnam" class="form-control" value="{{ old('num_cnam') }}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="dn">date naissance</label>
+                            <input id="dn" required="required"  type="date" name="date_naissance" class="form-control" value="{{ old('date_naissance') }}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="dm">date mariage</label>
+                            <input id="dm" required="required"  type="date" name="date_mariage" class="form-control" value="{{ old('date_mariage') }}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="emp">employé</label>
+                            <select id="emp" required="required" id="" name="employe" class="form-control selectemp">
+                                <option disabled selected value="vide">choisir l'employé</option>
                                 @forelse ($employes as $employe)
-                                    <option  value="{{$employe->id}}">
-                                        {{$employe->matricule}}
-                                    </option>
+                                <option {{ old('employe') == $employe->id ? 'selected' : '' }}   value="{{$employe->id}}">
+                                    {{$employe->matricule}}
+                                </option>
                                 @empty
-
                                 @endforelse
                             </select>
-                            <script>
-                            $(document).ready(function() {
-                                $('.js-example-basic-single').select2();
-                            });
-                            </script>
-                        </td>
-                        <td><input style="width: 400px" required="required"  type="file" name="c_image" class="form-control" value="{{ old('emp_image') }}"/></td>
-                    </tr>
-                </table>
+                        </div>
+                        <div class="form-group">
+                            <label for="cm">photo</label>
+                            <input id="cm" required="required"  type="file" name="c_image" class="form-control" value="{{ old('c_image') }}"/>
+                        </div>
+                        <button type="submit" class="btn btn-success">Enregistrer</button>
+                    </form>
+                </div>
             </div>
-                <button type="submit" class="btn btn-success">Enregistrer</button>
-            </form>
         </div>
         @else
             <div class="alert alert-warning" role="alert">

@@ -2,7 +2,7 @@
 @section('content')
 @php
     $user_id = auth()->user()->id;
-    $user_logged_in = \App\User::where(['id' => $user_id])->first();  
+    $user_logged_in = \App\User::where(['id' => $user_id])->first();
 @endphp
     <div class="container">
         <div class="card">
@@ -23,30 +23,33 @@
                         <p>{{ Session::get('success') }}</p>
                     </div>
                 @endif
-                <h4 class="card-title">Liste des conjointes</h4>
+                @if (Session::has('denied'))
+                <div class="alert alert-danger text-center">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <p>{{ Session::get('denied') }}</p>
+                </div>
+                @endif
+                <h4 class="card-title">Liste des conjoints</h4>
                 <p class="card-text text-success font-weight-bold">Total : {{ $count_couples }}</p>
-
+                {{ $couples->links() }}
                 <table
                     class="table"
                     data-toggle="table"
-                    data-pagination="true"
+                    data-pagination="false"
                     data-search="true"
-                    data-locale='fr-FR'
-                    data-pagination-h-align="left"
-                    data-pagination-detail-h-align="right"
-                    data-page-list="[5, 10, 25, 50, 100, 200, All]"
+                    data-locale="fr-FR"
+                    {{-- data-pagination-h-align="left" --}}
+                    {{-- data-pagination-detail-h-align="right" --}}
+                    {{-- data-page-list="[5, 10, 25, 50, 100, 200, All]" --}}
                         >
                     <thead class="thead-inverse">
                         <tr>
                             <th data-sortable="true">Photo</th>
-                            <th data-field="nni">nni</th>
-                            <th data-field="nom">nom</th>
-                            <th data-field="prenom">prenom</th>
+                            <th data-field="matricule" data-sortable="true">mat </th>
+                            <th data-field="nom" data-sortable="true">nom & prénom</th>
+                           {{--  <th data-field="sexe" data-sortable="true">sexe</th> --}}
+                            <th data-field="sexe" data-sortable="true">Numéro cnam</th>
                             <th data-field="statut">statut</th>
-                            <th>sexe</th>
-                            @if ($user_logged_in->profile == 'profil1')
-                            
-                            @endif
                             @if ($user_logged_in->profile == 'profil2')
                                 <th>action</th>
                             @endif
@@ -58,40 +61,48 @@
                         <tbody>
                             @forelse ($couples as $couple)
                                 <tr>
-                                    <td><img src="{{ asset('/couple_images/'. $couple->nni .'.jpg') }}" width="100px" height="100px"></td>
-                                    <td><a href="{{ route('couples.show', ['couple' => $couple->id]) }}">{{ $couple->nni }}</a></td>
-                                    <td>{{ $couple->nom }}</td>
-                                    <td>{{ $couple->prenom }}</td>
+                                    {{-- <td><img src="{{ asset('/couple_images/'. $couple->nni .'.jpg') }}" width="100px" height="100px"></td> --}}
                                     <td>
+                                        @if ($couple->image == null)
+                                        <img src="{{ asset('/images/pas_image.png') }}" width="100px" height="100px">
+                                        @else
+                                            <img src="{{ asset('/couple_images/'.$couple->nni.'.jpg') }}" width="100px" height="100px">
+                                        @endif
+                                    </td>
+                                    <td><a href="{{ route('couples.show', ['couple' => $couple->id]) }}">{{ $couple->matricule }}</a></td>
+                                    <td>{{ $couple->prenom .' '. $couple->nom  }}</td>
+
+                               {{--      <td>{{ $couple->sexe }}</td> --}}
+
+                                  <td>{{ $couple->num_cnam }}</td>
+
+                                    <td class="@if ($couple->statut == '1')assure @else nonAssure @endif">
                                         @if ($couple->statut == '1')
-                                            assuré
+                                        <i class="fas fa-check"></i> assuré
                                         @endif
                                         @if ($couple->statut == '0')
-                                            non assuré
+                                        <i class="fas fa-times"></i> non assuré
                                         @endif
                                     </td>
-                                    <td>{{ $couple->sexe }}</td>
+                                  {{--   @if ($user_logged_in->profile == 'profil2')
                                     <td>
-                                        @if ($user_logged_in->profile == 'profil1')
-                            
-                                        @endif
-                                        @if ($user_logged_in->profile == 'profil2')
-                                            <a class="btn btn-success btn-sm" type="button" href="{{ route('couples.edit', ['couple' => $couple->id]) }}"><i class="fas fa-edit"></i></a>
-                                        @endif
-                                        @if ($user_logged_in->profile == 'profil3')
-                                            <a class="btn btn-success btn-sm" type="button" href="{{ route('couples.edit', ['couple' => $couple->id]) }}"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="{{ route('couples.destroy', ['couple' => $couple->id]) }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button onclick="return confirm('Êtes-vous sûr de vouloir supprimer le(la) conjoint(e) ??')" class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash-alt"></i></button>
-                                            </form>
-                                        @endif
-                                        
+                                        <a class="btn btn-success btn-sm" type="button" href="{{ route('couples.edit', ['couple' => $couple->id]) }}"><i class="fas fa-edit"></i></a>
                                     </td>
+                                    @endif --}}
+                                    @if ($user_logged_in->profile == 'profil3'|| $user_logged_in->profile == 'profil2')
+                                    <td>
+                                        <a class="btn btn-success btn-sm" type="button" href="{{ route('couples.edit', ['couple' => $couple->id]) }}"><i class="fas fa-edit"></i></a>
+                                        <form method="POST" action="{{ route('couples.destroy', ['couple' => $couple->id]) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button onclick="return confirm('Êtes-vous sûr de vouloir supprimer le(la) conjoint(e) ??')" class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </td>
+                                    @endif
                                 </tr>
                             @empty
                                 <tr>
-                                    <td>Pas des conjoints(e)</td>
+                                    <td>Pas des conjoints</td>
                                 </tr>
                             @endforelse
                         </tbody>

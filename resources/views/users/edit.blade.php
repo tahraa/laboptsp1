@@ -6,29 +6,35 @@
 @endphp
     <div class="justify-content-center">
             <div class="card">
-                @if ($user_logged_in->profile == 'profil2' || $user_logged_in->profile == 'profil3')
+                @if ($user_logged_in->profile == 'profil2' || $user_logged_in->profile == 'profil3' || $user_logged_in->profile == 'profil1')
       
-                <div class="card-header text-primary">Utilisateurs/Modifier</div>
+                <div class="card-header text-primary">Utilisateurs/Modifier le mot de passe</div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('users.update', ['user'=>$user->id]) }}">
                         @csrf
                         @method('PUT')
                         @if ($errors->any())
                         <div class="alert alert-danger">
-                        <ul>
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                        </ul>
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                         @endif
                         @if (Session::has('success'))
                         <div class="alert alert-success text-center">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                        <p>{{ Session::get('success') }}</p>
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                            <p>{{ Session::get('success') }}</p>
                         </div>
                         @endif
-                        <div class="form-group row">
+                        @if (Session::has('denied'))
+                        <div class="alert alert-danger text-center">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                            <p>{{ Session::get('denied') }}</p>
+                        </div>
+                        @endif
+                        {{-- <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Nom') }}</label>
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control" name="name" value="{{ old('name', $user->name ?? null) }}" required autocomplete="name" autofocus>
@@ -39,13 +45,20 @@
                             <div class="col-md-6">
                                 <input id="email" type="email" class="form-control" name="email" value="{{ old('email', $user->email ?? null) }}" required autocomplete="email">
                             </div>
+                        </div> --}}
+
+                        <input type="hidden" name="old_password" value="{{ $user->password }}">
+                        <div class="form-group row">
+                            <label for="password" class="col-md-4 col-form-label text-md-right">Ancien Mot de passe</label>
+                            <div class="col-md-6">
+                                <input id="password" type="password" class="form-control" name="entred_password"  autocomplete="new-password" placeholder="entrez l'ancien mot de passe">
+                            </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Mot de passe') }}</label>
-                            <input type="hidden" name="old_password" value="{{ $user->password }}">
+                            <label for="password" class="col-md-4 col-form-label text-md-right">Nouveau mot de passe</label>
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password"  autocomplete="new-password" placeholder="laisser vide pour garder le mp">
+                                <input id="password" type="password" class="form-control" name="nv_password"  autocomplete="new-password" placeholder="entrez le nouveau mot de passe">
                             </div>
                         </div>
                         <div class="form-group row mb-0">

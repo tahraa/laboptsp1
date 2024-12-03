@@ -20,6 +20,7 @@ class CreateEmployesTable extends Migration
             $table->string('prenom', 120);
             $table->string('sexe', 100);
             $table->string('matricule', 120);
+            // $table->increments('mat')->start_from(100000);
             $table->boolean('statut');
             $table->timestamps();
         });
