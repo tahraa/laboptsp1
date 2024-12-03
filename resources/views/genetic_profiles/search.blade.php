@@ -37,7 +37,7 @@
             <button type="submit" class="btn btn-primary">Rechercher</button>
         </form>
 
-        <!-- Affichage des résultats de recherche s'il y en a -->
+      
         @if(request()->has('code') || request()->has('nom') || request()->has('prenom') || request()->has('nni'))
             @if(isset($profiles) && $profiles->count())
                 <div>
