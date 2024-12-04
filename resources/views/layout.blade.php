@@ -302,7 +302,9 @@
 					 	 <li class="">
                                 <a class=" active" href="{{ route('genetic_markers.search') }}"><i class="fas fa-search"></i> ProfilADN-Autosome</a>
                             </li>
-					 
+					  <li class="">
+                                <a class=" active" href="{{ route('genetic-markers-y.search') }}"><i class="fas fa-search"></i> ProfilADN-Y</a>
+                            </li>
                         @endif
                      </ul>
 					 

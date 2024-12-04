@@ -9,13 +9,14 @@ use App\Http\Controllers\GeneticMarkerYController;
 
 
 
-
+Route::get('genetic-profiles/search', [GeneticProfileController::class, 'search'])->name('genetic_profiles.search');
 
 Route::get('genetic-profiles/create', [GeneticProfileController::class, 'create'])->name('genetic-profiles.create');
 Route::post('genetic-profiles/store', [GeneticProfileController::class, 'store'])->name('genetic-profiles.store');
 Route::get('/genetic-profiles/{id}', [GeneticProfileController::class, 'show'])->name('genetic-profiles.show');
-Route::get('genetic-profiles/search', [GeneticProfileController::class, 'search'])->name('genetic_profiles.search');
-Route::get('genetic-profiles/search-form', [GeneticProfileController::class, 'searchForm'])->name('genetic_profiles.search_form');
+
+
+
 
 
 Route::get('/genetic-profiles', [GeneticProfileController::class, 'index'])->name('genetic-profiles.index');
@@ -24,6 +25,7 @@ Route::post('genetic-markers/store', [GeneticMarkerController::class, 'store'])-
 Route::get('/genetic-markers/search', [GeneticMarkerController::class, 'search'])->name('genetic_markers.search');
 Route::get('genetic-markers/{id}', [GeneticMarkerController::class, 'show'])->name('genetic-markers.show');
 
+Route::get('/search-genetic-markers', [GeneticMarkerYController::class, 'search'])->name('genetic-markers-y.search');
 
 
 

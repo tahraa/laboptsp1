@@ -78,79 +78,51 @@ public function show($id)
 
     return view('genetic_markersy.show', ['geneticMarker' => $geneticMarker, 'profile' => $profile]);
 }
+public function search(Request $request)
+{
+    // Liste des marqueurs à comparer
+    $markers = [
+        'DYS576', 'DYS389I', 'DYS448', 'DYS389II', 'DYS19', 'DYS391', 'DYS481',
+        'DYS549', 'DY533', 'DY438', 'DY437', 'DYS570', 'DYS635', 'DYS390', 'DYS439',
+        'DYS392', 'DYS643', 'DYS393', 'DYS458', 'DYS385', 'DYS456', 'YGATAH4',
+    ];
 
+    // Récupération des valeurs à comparer depuis la requête (GET)
+    $inputValues = $request->all();
 
+    // Total des paires de marqueurs à comparer
+    $totalPairs = count($markers);
 
+    // Compteur des correspondances
+    $matches = 0;
 
+    // Parcourir chaque marqueur pour comparaison
+    foreach ($markers as $marker) {
+        $marker_a = $inputValues["{$marker}_a"] ?? null;
+        $marker_b = $inputValues["{$marker}_b"] ?? null;
 
-
-
-
-
-
-
-
-
-
-    public function search(Request $request)
-    {
-        $markers = [
-            'DYS576', 'DYS389I', 'DYS448', 'DYS389II', 'DYS19', 'DYS391', 
-            'DYS481', 'DYS549', 'DY533', 'DY438', 'DY437', 'DYS570', 
-            'DYS635', 'DYS390', 'DYS439', 'DYS392', 'DYS643', 'DYS393', 
-            'DYS458', 'DYS385', 'DYS456', 'YGATAH4',
-        ];
-
-        $validatedMarkers = [];
-        $suffixes = ['a', 'b'];
-        $rules = 'numeric|between:0,99.9';
-
-        foreach ($markers as $marker) {
-            $conditions = [];
-            $hasValidConditions = false;
-
-            foreach ($suffixes as $suffix) {
-                $key = "{$marker}_{$suffix}";
-
-                if ($request->has($key) && $request->input($key) !== '') {
-                    $value = $request->input($key);
-                    $validator = \Validator::make(
-                        [$key => $value],
-                        [$key => $rules]
-                    );
-
-                    if ($validator->fails()) {
-                        return redirect()->back()->withErrors($validator)->withInput();
-                    }
-
-                    $conditions[$suffix] = $value;
-                    $hasValidConditions = true;
-                }
-            }
-
-            if ($hasValidConditions && isset($conditions['a']) && isset($conditions['b'])) {
-                $validatedMarkers[$marker] = $conditions;
+        // Vérifier si les deux valeurs sont présentes
+        if ($marker_a && $marker_b) {
+            // Comparer les paires de marqueurs
+            if ($this->compareMarkers($marker_a, $marker_b)) {
+                $matches++;
             }
         }
-
-        $query =ProfilY::query();
-
-        foreach ($validatedMarkers as $marker => $conditions) {
-            $query->where(function ($q) use ($marker, $conditions) {
-                $aValue = $conditions['a'] ?? null;
-                $bValue = $conditions['b'] ?? null;
-
-                if ($aValue) {
-                    $q->where($marker . '_a', $aValue);
-                }
-                if ($bValue) {
-                    $q->where($marker . '_b', $bValue);
-                }
-            });
-        }
-
-        $markers = $query->get();
-
-        return view('genetic_markersy.search', ['markers' => $markers]);
     }
+
+    // Calculer le pourcentage de correspondance
+    $matchPercentage = ($matches / $totalPairs) * 100;
+
+    // Vérifier si le pourcentage de correspondance est supérieur ou égal à 50%
+    if ($matchPercentage >= 50) {
+        $message = "Correspondance trouvée avec un taux de $matchPercentage%";
+    } else {
+        $message = "Aucune correspondance trouvée.";
+    }
+
+    return view('genetic_markersy.search_results', compact('message', 'matches', 'totalPairs', 'matchPercentage'));
+}
+
+
+
 }
