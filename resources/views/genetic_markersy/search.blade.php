@@ -24,26 +24,25 @@
 
         <h3 class="mb-4">Recherche d'un Profil Gonosomique Y</h3>
 
- <form action="{{ route('genetic-markers-y.search') }}" method="GET">
-    <div class="form-row">
-        @foreach ([
-            'DYS576', 'DYS389I', 'DYS448', 'DYS389II', 'DYS19', 'DYS391', 'DYS481',
-            'DYS549', 'DY533', 'DY438', 'DY437', 'DYS570', 'DYS635', 'DYS390', 'DYS439',
-            'DYS392', 'DYS643', 'DYS393', 'DYS458', 'DYS385', 'DYS456', 'YGATAH4'
-        ] as $marker)
-            <div class="form-group col-md-2 mb-3">
-                <label for="{{ $marker }}_a">{{ $marker }}</label>
-                <div class="input-group">
-                    <input type="text" id="{{ $marker }}_a" name="{{ $marker }}_a" value="{{ request($marker . '_a') }}" class="form-control form-control-sm" placeholder="Valeur A">
-                    <input type="text" id="{{ $marker }}_b" name="{{ $marker }}_b" value="{{ request($marker . '_b') }}" class="form-control form-control-sm" placeholder="Valeur B">
-                </div>
+        <form action="{{ route('genetic-markers-y.search') }}" method="GET">
+            <div class="form-row">
+                @foreach ([
+                    'DYS576', 'DYS389I', 'DYS448', 'DYS389II', 'DYS19', 'DYS391', 'DYS481',
+                    'DYS549', 'DY533', 'DY438', 'DY437', 'DYS570', 'DYS635', 'DYS390', 'DYS439',
+                    'DYS392', 'DYS643', 'DYS393', 'DYS458', 'DYS385', 'DYS456', 'YGATAH4'
+                ] as $marker)
+                    <div class="form-group col-md-2 mb-3">
+                        <label for="{{ $marker }}_a">{{ $marker }}</label>
+                        <div class="input-group">
+                            <input type="text" id="{{ $marker }}_a" name="{{ $marker }}_a" value="{{ request($marker . '_a') }}" class="form-control form-control-sm" placeholder="a">
+                            <input type="text" id="{{ $marker }}_b" name="{{ $marker }}_b" value="{{ request($marker . '_b') }}" class="form-control form-control-sm" placeholder="b">
+                        </div>
+                    </div>
+                @endforeach
             </div>
-        @endforeach
-    </div>
 
-    <button type="submit" class="btn btn-primary">Rechercher</button>
-</form>
-
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+        </form>
 
         <!-- Affichage du message de résultats -->
         @if(isset($message))
