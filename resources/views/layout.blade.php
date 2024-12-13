@@ -188,7 +188,7 @@
 
 
             <marquee class="text-primary font-weight-bold" width="100%" direction="left" height="50px">
-                Bienvenue au nouveau Site Intranet Automatisation des Registres de Laboratoire PTS  <img src="{{ asset('/images/logo.jpeg') }}" width="25px" height="25px" alt="">.
+                Bienvenue au nouveau Site Intranet pour l'automatisation des bases de données du laboratoire PTS <img src="{{ asset('/images/logo.jpeg') }}" width="25px" height="25px" alt="">.
             </marquee>
         </div>
         </div>

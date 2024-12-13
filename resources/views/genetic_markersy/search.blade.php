@@ -54,6 +54,24 @@
                 @endif
             </div>
         @endif
+
+        <!-- Affichage des profils correspondants -->
+        @if (isset($matchingProfiles) && count($matchingProfiles) > 0)
+            <div class="mt-4">
+                <h4>Profils correspondants :</h4>
+                <ul class="list-group">
+                    @foreach ($matchingProfiles as $profile)
+                        <li class="list-group-item">
+                            Profil ID: {{ $profile['profile_id'] }} 
+                            - Nombre de marqueurs correspondants : {{ $profile['matching_count'] }}
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @elseif (isset($matchingProfiles) && count($matchingProfiles) === 0)
+            <p>Aucun profil génétique trouvé avec plus de 11 marqueurs correspondants.</p>
+        @endif
+
     </div>
 </div>
 @endsection

@@ -6,7 +6,7 @@ $user_logged_in = \App\User::where(['id' => $user_id])->first();
 @endphp
     <div class="card">
         @if ($user_logged_in->profile == 'profil2' || $user_logged_in->profile == 'profil3'|| $user_logged_in->profile == 'profil1')
-        <div class="card-header text-primary"><h2>Ajouter/commissariat </h2>
+        <div class="card-header text-primary"><h2>Ajouter/Service Demendeur </h2>
         </div>
         <div class="card-body">
             <div class="row">
@@ -33,12 +33,12 @@ $user_logged_in = \App\User::where(['id' => $user_id])->first();
                 <div class="table-responsive">
 
                         <div class="form-group">
-                          <label for="nom">nom</label>
-                          <input id="nom"  required="required" type="text" name="nom" placeholder="Enter nom" class="form-control" value="{{ old('nom') }}"/>
+                          <label for="nom">Appellation</label>
+                          <input id="nom"  required="required" type="text" name="nom" placeholder="Enter Appellation" class="form-control" value="{{ old('nom') }}"/>
                         </div>
 
                         <div class="form-group">
-                          <label for="region">Direction regionnale de la sûreté</label>
+                          <label for="region">Direction Regionnale de la Sûreté</label>
                         <select  id="region" required="required" type="text" name="region" class="form-control"><option value=" "></option><option value="NKTT(OUEST)">NKTT(OUEST)</option><option value="NKTT(NORD)" >NKTT(NORD)</option><option value="NKTT(SUD)">NKTT(SUD)</option><option value="Adrar">ADRAR</option><option value="BRAKNA">BRAKNA</option><option value="HODH EL GHARBI">HODH EL GHARBI</option><option value="ASSABA">ASSABA</option><option value="TAGANET">TAGANET</option><option value="NDB">DAKHLET NOUADHIBOU</option><option value="TRARZA">TRARZA</option><option value="GORGOL">GORGOL</option><option value="GUIDIMAKA">GUIDIMAKA</option><option value="HODH EL CHARGUI">HODH EL CHARGUI</option><option value="INCHIRI">INCHIRI</option><option value="TIRIZZEMOUR">TIRIZZEMOUR</option></select></td>
 
                         </div>

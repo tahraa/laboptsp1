@@ -85,6 +85,8 @@ public function show($id)
 
     return view('genetic_markersy.show', ['geneticMarker' => $geneticMarker, 'profile' => $profile]);
 }
+
+
 public function search(Request $request)
 {
     // Liste des marqueurs génétiques
@@ -94,25 +96,24 @@ public function search(Request $request)
         'DYS392', 'DYS643', 'DYS393', 'DYS458', 'DYS385', 'DYS456', 'YGATAH4',
     ];
 
-    // Générer dynamiquement les règles de validation pour chaque marqueur
+    // Validation des données de recherche
     $validationRules = [];
     foreach ($markers as $marker) {
         $validationRules["{$marker}_a"] = 'nullable|numeric|between:0,99.9';
         $validationRules["{$marker}_b"] = 'nullable|numeric|between:0,99.9';
     }
 
-    // Valider les entrées du formulaire avec les règles générées dynamiquement
     $request->validate($validationRules);
 
-    // Récupérer les valeurs des marqueurs génétiques saisies et les combiner sous la forme "12,13"
+    // Collecte des données de recherche
     $searchData = [];
     foreach ($markers as $marker) {
         $searchA = $request->input("{$marker}_a");
         $searchB = $request->input("{$marker}_b");
 
-        // Si les deux valeurs sont saisies, on les combine avec une virgule
+        // Si les deux valeurs sont présentes, les concaténer en une seule chaîne
         if ($searchA !== null && $searchB !== null) {
-            $searchData[$marker] = $searchA . ',' . $searchB;
+            $searchData[$marker] = "$searchA,$searchB";
         } elseif ($searchA !== null) {
             $searchData[$marker] = $searchA;
         } elseif ($searchB !== null) {
@@ -120,76 +121,83 @@ public function search(Request $request)
         }
     }
 
-    // Initialiser la requête de recherche
+    // Vérifier que l'utilisateur a saisi au moins 11 marqueurs
+    $totalPairs = count($searchData);
+
+    if ($totalPairs < 11) {
+        $message = 'Vous devez saisir au moins 11 marqueurs pour effectuer la comparaison.';
+        return view('genetic_markersy.search', [
+            'message' => $message,
+            'matches' => 0,
+            'totalPairs' => $totalPairs,
+            'matchPercentage' => null,
+        ]);
+    }
+
     $query = ProfilY::query();
 
-    // Filtrer par les marqueurs saisis
     foreach ($markers as $marker) {
         if (isset($searchData[$marker])) {
             $value = $searchData[$marker];
-
-            // Recherche avec "LIKE" pour comparer la chaîne (par exemple "12,13")
             $query->where(function ($q) use ($marker, $value) {
-                $q->where($marker, 'like', "%$value%");
+                $q->where($marker, '=', $value);  
             });
         }
     }
 
-    // Exécuter la requête pour obtenir les profils correspondant
+    // Récupérer tous les profils correspondant
     $matchingProfiles = $query->get();
 
-    // Définir le nombre total de paires de marqueurs qui ont été saisies
-    $totalPairs = count(array_filter($searchData, fn($value) => $value !== null)); // Nombre de marqueurs pour lesquels des valeurs ont été saisies
+    // Variables pour les correspondances
+    $matchingProfilesWithCount = [];
 
-    // Calculer la correspondance
-    $matchingCount = 0;
+    // Comparer chaque profil pour vérifier les correspondances sur plus de 11 marqueurs
     foreach ($matchingProfiles as $profile) {
         $profileMatchingCount = 0;
 
-        // Pour chaque profil, comparer chaque marqueur saisi
+        // Comparaison des marqueurs
         foreach ($markers as $marker) {
             if (isset($searchData[$marker])) {
                 $value = $searchData[$marker];
-                $profileValue = $profile->getAttribute($marker); // Valeur enregistrée dans la base
+                $profileValue = $profile->$marker;  
 
-                // Vérifier si la valeur saisie correspond à la valeur dans la base de données (avec "LIKE")
-                if (strpos($profileValue, $value) !== false) {
+                // Vérification si la valeur correspond
+                if ($profileValue == $value) {
                     $profileMatchingCount++;
                 }
             }
         }
 
-        // Si le profil correspond à plus de 50% des marqueurs, l'ajouter aux correspondances
-        if ($profileMatchingCount / $totalPairs >= 0.5) {
-            $matchingCount++;
+        // Si le profil correspond à au moins 11 marqueurs, ajouter son ID
+        if ($profileMatchingCount >= 11) {
+            $matchingProfilesWithCount[] = [
+                'profile_id' => $profile->id, // ID du profil
+                'matching_count' => $profileMatchingCount, // Nombre de marqueurs correspondants
+            ];
         }
     }
 
-    // Si des correspondances sont trouvées
-    if ($matchingCount === 0) {
-        $message = 'Aucun profil génétique ne correspond à plus de 50%.';
-        $matchPercentage = null;
-        $matches = 0;
-    } else {
-        $message = 'Des profils génétiques avec plus de 50% de correspondance ont été trouvés.';
-        $matches = $matchingCount;
-
-        // Calculer le pourcentage de correspondance
-        $matchPercentage = ($matchingCount / $totalPairs) * 100;
+    // Si aucun profil ne correspond à au moins 11 marqueurs
+    if (count($matchingProfilesWithCount) === 0) {
+        $message = 'Aucun profil génétique ne correspond à au moins 11 marqueurs.';
+        return view('genetic_markersy.search', [
+            'message' => $message,
+            'matches' => 0,
+            'totalPairs' => $totalPairs,
+            'matchPercentage' => null,
+        ]);
     }
 
+    // Message de correspondance
+    $message = 'Des profils génétiques avec au moins 11 marqueurs ont été trouvés.';
+    
     return view('genetic_markersy.search', [
         'message' => $message,
-        'matches' => $matches,
+        'matchingProfiles' => $matchingProfilesWithCount,  // Liste des profils correspondants
         'totalPairs' => $totalPairs,
-        'matchPercentage' => $matchPercentage,
+        'matchPercentage' => null,
     ]);
 }
-
-
-
-
-
 
 
 
