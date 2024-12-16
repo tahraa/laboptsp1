@@ -341,7 +341,7 @@ public function search(Request $request)
         }
 
         // Utilisation de paginate au lieu de get pour la pagination
-        $profiles = $query->paginate(10);  // 10 profils par page
+        $profiles = $query->paginate(10);  
 
         // Passer les profils à la vue
         return view('genetic_markers.search', ['profiles' => $profiles]);

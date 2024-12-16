@@ -85,8 +85,6 @@ public function show($id)
 
     return view('genetic_markersy.show', ['geneticMarker' => $geneticMarker, 'profile' => $profile]);
 }
-
-
 public function search(Request $request)
 {
     // Liste des marqueurs génétiques
@@ -123,7 +121,6 @@ public function search(Request $request)
 
     // Vérifier que l'utilisateur a saisi au moins 11 marqueurs
     $totalPairs = count($searchData);
-
     if ($totalPairs < 11) {
         $message = 'Vous devez saisir au moins 11 marqueurs pour effectuer la comparaison.';
         return view('genetic_markersy.search', [
@@ -134,24 +131,13 @@ public function search(Request $request)
         ]);
     }
 
-    $query = ProfilY::query();
-
-    foreach ($markers as $marker) {
-        if (isset($searchData[$marker])) {
-            $value = $searchData[$marker];
-            $query->where(function ($q) use ($marker, $value) {
-                $q->where($marker, '=', $value);  
-            });
-        }
-    }
-
-    // Récupérer tous les profils correspondant
-    $matchingProfiles = $query->get();
+    // Récupérer tous les profils dans la base de données
+    $matchingProfiles = ProfilY::all();
 
     // Variables pour les correspondances
     $matchingProfilesWithCount = [];
 
-    // Comparer chaque profil pour vérifier les correspondances sur plus de 11 marqueurs
+    // Comparer chaque profil pour vérifier les correspondances sur au moins 11 marqueurs
     foreach ($matchingProfiles as $profile) {
         $profileMatchingCount = 0;
 
@@ -159,7 +145,7 @@ public function search(Request $request)
         foreach ($markers as $marker) {
             if (isset($searchData[$marker])) {
                 $value = $searchData[$marker];
-                $profileValue = $profile->$marker;  
+                $profileValue = $profile->$marker;
 
                 // Vérification si la valeur correspond
                 if ($profileValue == $value) {
@@ -198,7 +184,5 @@ public function search(Request $request)
         'matchPercentage' => null,
     ]);
 }
-
-
 
 }
