@@ -58,14 +58,17 @@
         <!-- Affichage des profils correspondants -->
         @if (isset($matchingProfiles) && count($matchingProfiles) > 0)
             <div class="mt-4">
-                <h4>Profils correspondants :</h4>
+                <h4>Profils correspondants : {{ $matches }}</h4>
                 <ul class="list-group">
                     @foreach ($matchingProfiles as $profile)
-                        <li class="list-group-item">
-                            Profil ID: {{ $profile['profile_id'] }} 
-                            - Nombre de marqueurs correspondants : {{ $profile['matching_count'] }}
-                        </li>
-                    @endforeach
+                <li class="list-group-item">
+                    Profil ID: 
+                    <a href="{{ route('genetic-profiles.show', ['id' => $profile['profile_id']]) }}" class="btn btn-link">
+                        {{ $profile['profile_id'] }}
+                    </a> 
+                    - Nombre de marqueurs correspondants : {{ $profile['matching_count'] }}
+                </li>
+            @endforeach
                 </ul>
             </div>
         @elseif (isset($matchingProfiles) && count($matchingProfiles) === 0)

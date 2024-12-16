@@ -85,6 +85,9 @@ public function show($id)
 
     return view('genetic_markersy.show', ['geneticMarker' => $geneticMarker, 'profile' => $profile]);
 }
+
+
+
 public function search(Request $request)
 {
     // Liste des marqueurs génétiques
@@ -157,7 +160,7 @@ public function search(Request $request)
         // Si le profil correspond à au moins 11 marqueurs, ajouter son ID
         if ($profileMatchingCount >= 11) {
             $matchingProfilesWithCount[] = [
-                'profile_id' => $profile->id, // ID du profil
+                'profile_id' => $profile->genetic_profile_id, // ID du profil
                 'matching_count' => $profileMatchingCount, // Nombre de marqueurs correspondants
             ];
         }
@@ -177,12 +180,23 @@ public function search(Request $request)
     // Message de correspondance
     $message = 'Des profils génétiques avec au moins 11 marqueurs ont été trouvés.';
     
+    // Afficher le nombre de profils correspondants
+    $numberOfMatches = count($matchingProfilesWithCount);
+
     return view('genetic_markersy.search', [
         'message' => $message,
         'matchingProfiles' => $matchingProfilesWithCount,  // Liste des profils correspondants
+        'matches' => $numberOfMatches,  // Nombre de profils correspondants
         'totalPairs' => $totalPairs,
         'matchPercentage' => null,
     ]);
 }
+
+
+
+
+
+
+
 
 }

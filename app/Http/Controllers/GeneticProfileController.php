@@ -79,18 +79,23 @@ public function store(Request $request)
     }
 }
 
-  public function show($id)
-    {
-          // Charge la relation affaire avec le profil génétique
+public function show($id)
+{
+    // Charge la relation affaire avec le profil génétique
     $profile = GeneticProfile::with('affaires')->findOrFail($id);
-       // Construire le chemin de l'image
+    
+    // Construire le chemin de l'image
     $imagePath = public_path('images/' . $profile->nni . '.jpg');  // Utilise l'extension .jpg
     
     // Vérifier si l'image existe
     $imageExists = file_exists($imagePath);
     
-    return view('genetic_profiles.show', compact('profile', 'imageExists', 'imagePath'));
+    // Passer les affaires liées à ce profil
+    $affaires = $profile->affaires; // Cela récupère toutes les affaires associées au profil
+    
+    return view('genetic_profiles.show', compact('profile', 'imageExists', 'imagePath', 'affaires'));
 }
+
 
 
   public function index()
