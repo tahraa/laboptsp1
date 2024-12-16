@@ -178,7 +178,7 @@ public function search(Request $request)
     }
 
     // Message de correspondance
-    $message = 'Des profils génétiques avec au moins 11 marqueurs ont été trouvés.';
+    $message = 'Des profils génétiques avec au moins 13 marqueurs ont été trouvés.';
     
     // Afficher le nombre de profils correspondants
     $numberOfMatches = count($matchingProfilesWithCount);

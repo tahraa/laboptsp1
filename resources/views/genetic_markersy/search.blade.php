@@ -58,7 +58,7 @@
         <!-- Affichage des profils correspondants -->
         @if (isset($matchingProfiles) && count($matchingProfiles) > 0)
             <div class="mt-4">
-                <h4>Profils correspondants : {{ $matches }}</h4>
+                <h4>Nombre de profils correspondants : {{ $matches }}</h4>
                 <ul class="list-group">
                     @foreach ($matchingProfiles as $profile)
                 <li class="list-group-item">
