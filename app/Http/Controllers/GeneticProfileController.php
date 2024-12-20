@@ -16,7 +16,6 @@ public function create()
    
     return view('genetic_profiles.create', compact('affaires'));
 }
-
 public function store(Request $request)
 {
     // Valider les données du formulaire
@@ -50,6 +49,9 @@ public function store(Request $request)
         'is_known' => $is_known,
     ]);
 
+    // Attacher le profil génétique à l'affaire dans la table de jointure
+    $geneticProfile->affaires()->attach($request->input('affaire_id'));
+
     // Stocker les données du profil en session pour les utiliser lors de la création des marqueurs génétiques
     session(['profileData' => [
         'id' => $geneticProfile->id, // Ajout de l'ID
@@ -79,10 +81,11 @@ public function store(Request $request)
     }
 }
 
+
 public function show($id)
 {
     // Charge la relation affaire avec le profil génétique
-    $profile = GeneticProfile::with('affaires')->findOrFail($id);
+    $profile = GeneticProfile::with('affaires','geneticMarker','profilY')->findOrFail($id);
     
     // Construire le chemin de l'image
     $imagePath = public_path('images/' . $profile->nni . '.jpg');  // Utilise l'extension .jpg
@@ -90,11 +93,12 @@ public function show($id)
     // Vérifier si l'image existe
     $imageExists = file_exists($imagePath);
     
-    // Passer les affaires liées à ce profil
-    $affaires = $profile->affaires; // Cela récupère toutes les affaires associées au profil
-    
-    return view('genetic_profiles.show', compact('profile', 'imageExists', 'imagePath', 'affaires'));
-}
+  
+    $affaires = $profile->affaires; 
+    $geneticMarker = $profile->geneticMarker;
+    $profilY = $profile->profilY;
+
+    return view('genetic_profiles.show', compact('profile', 'imageExists', 'imagePath', 'affaires', 'geneticMarker', 'profilY'));}
 
 
 
@@ -102,35 +106,27 @@ public function show($id)
 {
     $user_id = auth()->user()->id;
 
-    $knownProfiles = DB::table('genetic_profiles')
-        ->leftJoin('genetic_markers', 'genetic_profiles.id', '=', 'genetic_markers.genetic_profile_id')
-        ->leftJoin('affaires', 'genetic_profiles.affaire_id', '=', 'affaires.id') 
-       // ->leftJoin('profil_y_s', 'genetic_profiles.id', '=', 'profil_y_s.genetic_profile_id') 
-        ->where('is_known', true)
-        ->orderBy('genetic_profiles.code', 'desc')
-        ->select('genetic_profiles.*', 'genetic_markers.*', 'affaires.num_affaire') 
-        ->paginate(100, ['*'], 'knownPage');
+      // Profils connus
+      $knownProfiles = GeneticProfile::with(['geneticMarker', 'affaires', 'profilY'])
+      ->where('is_known', true)
+      ->orderBy('code', 'desc')
+      ->paginate(500); // Pagination avec Eloquent
+// Profils inconnus
+$unknownProfiles = GeneticProfile::with(['geneticMarker', 'affaires', 'profilY'])
+->where('is_known', false)
+->orderBy('code', 'desc')
+->paginate(500); 
+$count_profiles = GeneticProfile::count();
 
-
-
-    $unknownProfiles = DB::table('genetic_profiles')
-        ->leftJoin('affaires', 'genetic_profiles.affaire_id', '=', 'affaires.id')
-        ->leftJoin('genetic_markers', 'genetic_profiles.id', '=', 'genetic_markers.genetic_profile_id')
-       // ->leftJoin('profil_y_s', 'genetic_profiles.id', '=', 'profil_y_s.genetic_profile_id') 
-        ->where('genetic_profiles.is_known', false)
-        ->orderBy('genetic_profiles.code', 'desc')
-        ->select('genetic_profiles.*', 'affaires.num_affaire', 'genetic_markers.*') 
-        ->paginate(100, ['*'], 'unknownPage');
-
-    // Compter le nombre total de profils
-    $count_profiles = DB::table('genetic_profiles')->count();
-
-    return view('genetic_profiles.index', [
-        'knownProfiles' => $knownProfiles,
-        'unknownProfiles' => $unknownProfiles,
-        'count_profiles' => $count_profiles,
-    ]);
+return view('genetic_profiles.index', [
+'knownProfiles' => $knownProfiles,
+'unknownProfiles' => $unknownProfiles,
+'count_profiles' => $count_profiles,
+]);
 }
+
+
+ 
 
 public function searchForm()
 {

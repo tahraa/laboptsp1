@@ -11,29 +11,25 @@
             <div class="alert alert-warning">{{ $message }}</div>
         @endif
 
-     @if (isset($geneticMarkery))  <!-- Vérifier si geneticMarkery existe -->
-
-            <h3>Marqueurs Y</h3>
+        @if (isset($geneticMarkers) && count($geneticMarkers) > 0)  <!-- Vérifier si des marqueurs existent -->
+         
             <table class="table">
                 <thead>
                     <tr>
                         <th>Marqueur</th>
-                        <th>Allèle A</th>
-                        <th>Allèle B</th>
+                        <th>Valeur</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($geneticMarkery->getAttributes() as $key => $value)
-                        @if (strpos($key, '_a') !== false)  <!-- Afficher uniquement les marqueurs A -->
-                            <tr>
-                                <td>{{ str_replace('_a', '', $key) }}</td>
-                                <td>{{ $value }}</td>
-                                <td>{{ $geneticMarkery->{str_replace('_a', '_b', $key)} }}</td>
-                            </tr>
-                        @endif
+                    @foreach ($geneticMarkers as $marker => $value) <!-- Boucle sur chaque marqueur -->
+                        <tr>
+                            <td>{{ $marker }}</td>  <!-- Nom du marqueur -->
+                            <td>{{ $value ?? 'Non défini' }}</td>  <!-- Valeur du marqueur -->
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
+
         @endif
     </div>
 </div>

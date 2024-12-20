@@ -74,16 +74,27 @@ public function store(Request $request)
 
 public function show($id)
 {
-   $geneticMarker = ProfilY::where('genetic_profile_id', $id)->first();
-
-
+    $geneticMarker = ProfilY::where('id', $id)->first();
+//dd( $geneticMarker);
     if (!$geneticMarker) {
-        return view('genetic_markersy.show')->with('message', 'Aucun alléle autosomique trouvé pour ce profil.');
+        return view('genetic_markersy.show')->with('message', 'Aucun alléle gonosomique Y trouvé pour ce profil.');
     }
 
     $profile = $geneticMarker->geneticProfile;
 
-    return view('genetic_markersy.show', ['geneticMarker' => $geneticMarker, 'profile' => $profile]);
+    // Extraire les marqueurs Y sous forme de tableau
+    $geneticMarkers = $geneticMarker->only([
+        'DYS576', 'DYS389I', 'DYS448', 'DYS389II', 'DYS19', 'DYS391', 'DYS481',
+        'DYS549', 'DY533', 'DY438', 'DY437', 'DYS570', 'DYS635', 'DYS390',
+        'DYS439', 'DYS392', 'DYS643', 'DYS393', 'DYS458', 'DYS385', 'DYS456',
+        'YGATAH4'
+    ]);
+
+    return view('genetic_markersy.show', [
+        'geneticMarker' => $geneticMarker,
+        'profile' => $profile,
+        'geneticMarkers' => $geneticMarkers
+    ]);
 }
 
 
@@ -178,7 +189,7 @@ public function search(Request $request)
     }
 
     // Message de correspondance
-    $message = 'Des profils génétiques avec au moins 13 marqueurs ont été trouvés.';
+    $message = 'Des profils génétiques avec au moins 11 marqueurs ont été trouvés.';
     
     // Afficher le nombre de profils correspondants
     $numberOfMatches = count($matchingProfilesWithCount);

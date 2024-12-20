@@ -12,11 +12,12 @@ class GeneticProfile extends Model
         'lieu_naissance', 'motif_nom', 'is_known', 'nomcriminel'
     ];
 
-    public function affaires()
-    {
-        return $this->belongsToMany(Affaire::class)
-                    ->withTimestamps();
-    }
+
+        public function affaires()
+        {
+            return $this->belongsToMany(Affaire::class, 'affaire_genetic_profile', 'genetic_profile_id', 'affaire_id')
+                        ->withTimestamps();
+        }
 
 	  public function geneticMarker()
     {
